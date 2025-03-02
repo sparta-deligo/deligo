@@ -9,6 +9,7 @@ import com.example.deligo.user.entity.User;
 import com.example.deligo.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,17 +27,12 @@ public class ReviewController {
     private final UserService userService;
 
     private User getAuthenticatedUser(UserDetails userDetails) {
-        if(userDetails == null || userDetails.getUsername() == null) {
-            throw new CustomException(ExceptionType.UNAUTHORIZED);
-        }
-        return userService.findByEmail(
-                        Optional.ofNullable(userDetails)
-                                .map(UserDetails::getUsername)
-                                .map(String::trim)
-                                .map(String::toLowerCase)
-                                .orElseThrow(() -> new CustomException(ExceptionType.UNAUTHORIZED))
-                userDetails.getUsername().trim().toLowerCase())
-                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        return Optional.ofNullable(userDetails)
+                .map(UserDetails::getUsername)
+                .map(String::trim)
+                .map(String::toLowerCase)
+                .flatMap(userService::findByEmail)
+                .orElseThrow(() -> new CustomException(ExceptionType.UNAUTHORIZED));
     }
 
     @PostMapping
@@ -45,7 +41,8 @@ public class ReviewController {
             @Valid @RequestBody ReviewRequest request
     ) {
         User user = getAuthenticatedUser(userDetails);
-        return ResponseEntity.ok(reviewService.createReview(user, request));
+        ReviewResponse response = reviewService.createReview(user, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{reviewId}")

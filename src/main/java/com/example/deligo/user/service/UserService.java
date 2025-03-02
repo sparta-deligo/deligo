@@ -2,8 +2,6 @@ package com.example.deligo.user.service;
 
 import com.example.deligo.user.entity.User;
 import com.example.deligo.user.repository.UserRepository;
-import com.example.deligo.common.exception.CustomException;
-import com.example.deligo.common.exception.ExceptionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
