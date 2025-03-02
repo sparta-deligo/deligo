@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/reviews")
@@ -28,7 +29,13 @@ public class ReviewController {
         if(userDetails == null || userDetails.getUsername() == null) {
             throw new CustomException(ExceptionType.UNAUTHORIZED);
         }
-        return userService.findByEmail(userDetails.getUsername().trim().toLowerCase())
+        return userService.findByEmail(
+                        Optional.ofNullable(userDetails)
+                                .map(UserDetails::getUsername)
+                                .map(String::trim)
+                                .map(String::toLowerCase)
+                                .orElseThrow(() -> new CustomException(ExceptionType.UNAUTHORIZED))
+                userDetails.getUsername().trim().toLowerCase())
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
     }
 

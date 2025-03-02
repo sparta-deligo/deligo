@@ -7,13 +7,14 @@ import com.example.deligo.common.exception.ExceptionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
 
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }
