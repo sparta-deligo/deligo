@@ -1,6 +1,7 @@
 package com.example.deligo.review.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public class OwnerCommentRequest {
     @NotNull(message = "리뷰 ID는 필수입니다.")
