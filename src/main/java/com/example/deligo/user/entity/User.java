@@ -26,7 +26,7 @@ public class User extends BaseDeletableEntity {
     private String nickname;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false) // 수정
+    @Column(nullable = false)
     private UserRole role;
 
     @Builder
@@ -37,7 +37,7 @@ public class User extends BaseDeletableEntity {
         this.role = role;
     }
 
-    public boolean isOwner() { // 수정
+    public boolean isOwner() {
         return this.role == UserRole.OWNER;
     }
 }
