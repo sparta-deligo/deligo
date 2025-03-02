@@ -1,5 +1,6 @@
 package com.example.deligo.common.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 public class BaseDeletableEntity extends BaseTimeEntity {
 
+    @Column
     private LocalDateTime deletedAt = null;
 
     public void softDelete() {

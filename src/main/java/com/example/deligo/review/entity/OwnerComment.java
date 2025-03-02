@@ -3,12 +3,7 @@ package com.example.deligo.review.entity;
 import com.example.deligo.common.entity.BaseDeletableEntity;
 import com.example.deligo.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
+import lombok.*;
 
 @Entity
 @Table(name = "owner_comments")
@@ -20,12 +15,12 @@ public class OwnerComment extends BaseDeletableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User owner;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "review_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id",nullable = false, unique = true)
     private Review review;
 
     private String content;

@@ -2,6 +2,7 @@ package com.example.deligo.order.entity;
 
 import com.example.deligo.common.entity.BaseTimeEntity;
 import com.example.deligo.menu.entity.Menu;
+import com.example.deligo.review.entity.Review;
 import com.example.deligo.store.entity.Store;
 import com.example.deligo.user.entity.User;
 import jakarta.persistence.*;
@@ -30,6 +31,9 @@ public class Order extends BaseTimeEntity {
     @JoinColumn(name = "store_id")
     private Store store;
 
+    @OneToOne(mappedBy = "order",cascade = CascadeType.ALL, orphanRemoval = true)
+    private Review review; // 추가
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id")
     private Menu menu;
@@ -55,5 +59,14 @@ public class Order extends BaseTimeEntity {
         this.storeComment = storeComment;
         this.riderComment = riderComment;
         this.status = status;
+    }
+    public boolean hasReview() { // 추가
+        return this.review != null;
+    }
+    public boolean isCompleted() { // 추가
+        return this.status == OrderStatus.COMPLETED;
+    }
+    public void setReview(Review review) {
+        this.review = review;
     }
 }
