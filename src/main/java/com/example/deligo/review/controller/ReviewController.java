@@ -1,5 +1,7 @@
 package com.example.deligo.review.controller;
 
+import com.example.deligo.common.exception.CustomException;
+import com.example.deligo.common.exception.ExceptionType;
 import com.example.deligo.review.dto.ReviewRequest;
 import com.example.deligo.review.dto.ReviewResponse;
 import com.example.deligo.review.service.ReviewService;
@@ -22,36 +24,44 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final UserService userService;
 
+    private User getAuthenticatedUser(UserDetails userDetails) {
+        if(userDetails == null || userDetails.getUsername() == null) {
+            throw new CustomException(ExceptionType.UNAUTHORIZED);
+        }
+        return userService.findByEmail(userDetails.getUsername().trim().toLowerCase())
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+    }
+
     @PostMapping
     public ResponseEntity<ReviewResponse> createReview(
             @AuthenticationPrincipal UserDetails userDetails,
             @Valid @RequestBody ReviewRequest request
     ) {
-        User user = userService.findByEmail(userDetails.getUsername());
+        User user = getAuthenticatedUser(userDetails);
         return ResponseEntity.ok(reviewService.createReview(user, request));
     }
 
     @PutMapping("/{reviewId}")
     public ResponseEntity<ReviewResponse> updateReview(
-            @AuthenticationPrincipal String email,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long reviewId,
             @Valid @RequestBody ReviewRequest request
     ) {
-        User user = userService.findByEmail(email);
+        User user = getAuthenticatedUser(userDetails);
         return ResponseEntity.ok(reviewService.updateReview(user, reviewId, request));
     }
 
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(
-            @AuthenticationPrincipal String email,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long reviewId
     ) {
-        User user = userService.findByEmail(email);
+        User user = getAuthenticatedUser(userDetails);
         reviewService.deleteReview(user, reviewId);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/store/{storeId}/reviews")
+    @GetMapping("/stores/{storeId}/reviews")
     public ResponseEntity<List<ReviewResponse>> getReviewsByStore(@PathVariable Long storeId) {
         return ResponseEntity.ok(reviewService.getReviewsByStore(storeId));
     }
