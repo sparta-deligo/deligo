@@ -66,7 +66,11 @@ public class ReviewController {
     }
 
     @GetMapping("/stores/{storeId}/reviews")
-    public ResponseEntity<List<ReviewResponse>> getReviewsByStore(@PathVariable Long storeId) {
-        return ResponseEntity.ok(reviewService.getReviewsByStore(storeId));
+    public ResponseEntity<List<ReviewResponse>> getReviewsByStore(
+            @PathVariable Long storeId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(reviewService.getReviewsByStore(storeId, page, size));
     }
 }
