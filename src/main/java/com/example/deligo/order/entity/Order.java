@@ -60,6 +60,11 @@ public class Order extends BaseTimeEntity {
         this.riderComment = riderComment;
         this.status = status;
     }
+
+    public Order(long l, User user, String 배송지, String 가게_코멘트, String 라이더_코멘트, String completed) {
+        super();
+    }
+
     public boolean hasReview() { // 추가
         return this.review != null;
     }

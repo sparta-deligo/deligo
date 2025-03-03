@@ -48,6 +48,9 @@ public class Review extends BaseDeletableEntity {
         if (order.getReview() != null) {
             throw new CustomException(ExceptionType.DUPLICATE_RESOURCE);
         }
+        if (rating < 1 || rating > 5) {
+            throw new CustomException(ExceptionType.INVALID_REQUEST, "별점은 1~5점 사이여야 합니다.");
+        }
         this.user = user;
         this.order = order;
         this.rating = rating;
@@ -69,6 +72,7 @@ public class Review extends BaseDeletableEntity {
         if(!this.user.equals(user)) {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
         }
+        this.ownerComment = null;
         this.softDelete();
     }
 
