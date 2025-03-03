@@ -64,6 +64,19 @@ public class MenuService {
         return MenuResponse.from(menu);
     }
 
+    @Transactional
+    public void delete(Long userId, Long menuId) {
+        User owner = getOwner(userId);
+        Menu menu = getMenu(menuId);
+        if(!menu.getStore().getOwner().equals(owner)) {
+            throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
+        }
+
+        // TODO : 해당 메뉴가 포함된 '진행 중'인 주문이 있는 경우 삭제 불가 처리, 주문 기능 완료 시 추가 예정
+
+        menu.updateStatus(MenuStatus.DELETED);
+        menu.softDelete();
+    }
 
     private User getOwner(Long userId) {
         User user = getUser(userId);

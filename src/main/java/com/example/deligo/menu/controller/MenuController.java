@@ -1,5 +1,6 @@
 package com.example.deligo.menu.controller;
 
+import com.example.deligo.common.dto.ApiResponse;
 import com.example.deligo.menu.dto.request.CreateMenuRequest;
 import com.example.deligo.menu.dto.request.UpdateMenuRequest;
 import com.example.deligo.menu.dto.response.MenuResponse;
@@ -34,4 +35,12 @@ public class MenuController {  // TODO: 회원가입 & 로그인 로직 구현 �
         return new ResponseEntity<>(menuService.update(userId, menuId, request), HttpStatus.OK);
     }
 
+    @DeleteMapping("/{menuId}")
+    public ResponseEntity<ApiResponse> deleteMenu(
+            @RequestParam Long userId,
+            @PathVariable Long menuId
+    ) {
+        menuService.delete(userId, menuId);
+        return new ResponseEntity<>(new ApiResponse("메뉴가 삭제 처리되었습니다."),HttpStatus.OK);
+    }
 }

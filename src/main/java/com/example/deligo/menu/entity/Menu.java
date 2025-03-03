@@ -50,4 +50,8 @@ public class Menu extends BaseDeletableEntity {
         this.price = price;
         this.status = status;
     }
+
+    public void updateStatus(MenuStatus status) {
+        this.status = status;
+    }
 }
