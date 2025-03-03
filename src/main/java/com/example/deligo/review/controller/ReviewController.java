@@ -1,5 +1,6 @@
 package com.example.deligo.review.controller;
 
+import com.example.deligo.common.dto.PaginationResponse;
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.common.exception.ExceptionType;
 import com.example.deligo.review.dto.ReviewRequest;
@@ -9,13 +10,12 @@ import com.example.deligo.user.entity.User;
 import com.example.deligo.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.*;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -66,11 +66,12 @@ public class ReviewController {
     }
 
     @GetMapping("/stores/{storeId}/reviews")
-    public ResponseEntity<List<ReviewResponse>> getReviewsByStore(
+    public ResponseEntity<PaginationResponse<ReviewResponse>> getReviewsByStore(
             @PathVariable Long storeId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(reviewService.getReviewsByStore(storeId, page, size));
+        Page<ReviewResponse> reviewPage = reviewService.getReviewsByStore(storeId, page, size);
+        return ResponseEntity.ok(new PaginationResponse<>(reviewPage));
     }
 }
