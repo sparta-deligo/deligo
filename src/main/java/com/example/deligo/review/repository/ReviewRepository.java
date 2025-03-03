@@ -14,8 +14,8 @@ import java.util.Optional;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     Optional<Review> findByOrderId(Long orderId);
-    List<Review> findAllByOrderStoreIdOrderByCreatedAtDesc(Long storeId);
-    @Query("SELECT COALESCE(AVG(r.rating), 0) FROM Review r WHERE r.order.store.id = :storeId AND r.deletedAt IS NULL")
-    double findAverageRatingByStoreId(@Param("storeId") Long storeId);
-    Page<Review> findByOrder_StoreIdOrderByCreatedAtDesc(Long storeId, Pageable pageable);
+    List<Review> findAllByOrderStoreIdAndDeletedAtIsNullOrderByCreatedAtDesc(Long storeId);
+    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.order.store.id = :storeId AND r.deletedAt IS NULL")
+    Optional<Double> findAverageRatingByStoreId(@Param("storeId") Long storeId);
+    Page<Review> findByOrder_StoreIdAndDeletedAtIsNullOrderByCreatedAtDesc(Long storeId, Pageable pageable);
 }
