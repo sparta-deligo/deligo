@@ -25,5 +25,13 @@ public class MenuController {  // TODO: 회원가입 & 로그인 로직 구현 �
         return new ResponseEntity<>(menuService.create(userId, request), HttpStatus.CREATED);
     }
 
+    @PutMapping("/{menuId}")
+    public ResponseEntity<MenuResponse> updateMenu(
+            @RequestParam Long userId,
+            @PathVariable Long menuId,
+            @Valid @RequestBody UpdateMenuRequest request
+    ) {
+        return new ResponseEntity<>(menuService.update(userId, menuId, request), HttpStatus.OK);
+    }
 
 }
