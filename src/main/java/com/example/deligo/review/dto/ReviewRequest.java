@@ -8,7 +8,6 @@ import lombok.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 public class ReviewRequest {
 
     @NotNull(message = "주문 ID는 필수입니다.")
@@ -22,14 +21,13 @@ public class ReviewRequest {
     @Size(min = 1, max = 1000, message = "리뷰는 최소 1자 이상, 최대 1000자 이하로 입력해야 합니다.")
     private String content;
 
-    public ReviewRequest(Long orderId, int rating, String content) {
+    public static ReviewRequest from(Long orderId, int rating, String content) {
+        content = (content != null) ? content.trim() : null;
         validate(orderId, rating, content);
-        this.orderId = orderId;
-        this.rating = rating;
-        this.content = content.trim();
+        return new ReviewRequest(orderId, rating, content);
     }
 
-    public static ReviewRequest from(Long orderId, int rating, String content) {
+    private static void validate(Long orderId, int rating, String content) {
         if (orderId == null) {
             throw new CustomException(ExceptionType.INVALID_REQUEST, "주문 ID는 필수입니다.");
         }
@@ -38,10 +36,6 @@ public class ReviewRequest {
         }
         if (content == null || content.isBlank()) {
             throw new CustomException(ExceptionType.INVALID_REQUEST, "리뷰 내용은 비어있을 수 없습니다.");
-        }
-
-        public static ReviewRequest from(Long orderId, int rating, String content) {
-            return new ReviewRequest(orderId, rating, content);
         }
     }
 }
