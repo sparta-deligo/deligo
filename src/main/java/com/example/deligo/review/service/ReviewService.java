@@ -11,6 +11,9 @@ import com.example.deligo.review.repository.ReviewRepository;
 import com.example.deligo.user.entity.User;
 import com.example.deligo.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +26,12 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+
+    public Page<ReviewResponse> getReviewsByStroe(Long storeId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return reviewRepository.findByOrder_StoreIdOrderByCreatedAtDesc(storeId, pageable)
+                .map(ReviewResponse::from);
+    }
 
     @Transactional
     public ReviewResponse createReview(User user, ReviewRequest request) {
