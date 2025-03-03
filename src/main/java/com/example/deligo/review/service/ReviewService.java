@@ -16,65 +16,92 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
+    private final ReviewServiceHelper reviewServiceHelper;
 
+    @Transactional(readOnly = true)
     public Page<ReviewResponse> getReviewsByStore(Long storeId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return reviewRepository.findByOrder_StoreIdOrderByCreatedAtDesc(storeId, pageable)
+        return reviewRepository.findByStoreId(storeId, pageable)
                 .map(ReviewResponse::from);
     }
 
     @Transactional
     public ReviewResponse createReview(User user, ReviewRequest request) {
-        Order order = orderRepository.findById(request.getOrderId())
-                .orElseThrow(() -> new CustomException(ExceptionType.ORDER_NOT_FOUND));
-
-        if (reviewRepository.findByOrderId(request.getOrderId()).isPresent()) {
-            throw new CustomException(ExceptionType.DUPLICATE_RESOURCE, "이미 해당 주문에 대한 리뷰가 존재합니다.");
-        }
+        Order order = getOrderById(request.getOrderId());
+        validateReviewCreation(order);
 
         Review review = Review.builder()
                 .user(user)
                 .order(order)
-                .store(order.getStore())
                 .rating(request.getRating())
                 .content(request.getContent())
                 .build();
 
         reviewRepository.save(review);
-
-        updateStoreAverageRating(order.getStore().getId());
+        reviewServiceHelper.updateStoreAverageRating(order.getStore().getId());
 
         return new ReviewResponse(review);
     }
 
     @Transactional
     public ReviewResponse updateReview(User user, Long reviewId, ReviewRequest request) {
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new CustomException(ExceptionType.REVIEW_NOT_FOUND));
+        Review review = getReviewById(reviewId);
+        validateReviewUpdate(review, user);
 
         review.updateReview(user, request.getRating(), request.getContent());
+        reviewServiceHelper.updateStoreAverageRating(review.getOrder().getStore().getId());
+
         return new ReviewResponse(review);
     }
 
     @Transactional
     public void deleteReview(User user, Long reviewId) {
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new CustomException(ExceptionType.REVIEW_NOT_FOUND));
+        Review review = getReviewById(reviewId);
+        validateReviewDeletion(review, user);
 
         review.deleteReview(user);
+        reviewServiceHelper.updateStoreAverageRating(review.getOrder().getStore().getId());
     }
 
     @Transactional(readOnly = true)
-    public List<ReviewResponse> getReviewsByStore(Long storeId) {
-        return reviewRepository.findAllByOrderStoreIdOrderByCreatedAtDesc(storeId)
-                .stream().map(ReviewResponse::new).toList();
+    public boolean isReviewExists(Long orderId) {
+        return reviewRepository.findByOrderId(orderId).isPresent();
+    }
+
+    private Order getOrderById(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new CustomException(ExceptionType.ORDER_NOT_FOUND));
+    }
+
+    private Review getReviewById(Long reviewId) {
+        return reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CustomException(ExceptionType.REVIEW_NOT_FOUND));
+    }
+
+    private void validateReviewCreation(Order order) {
+        if (!order.isCompleted()) {
+            throw new CustomException(ExceptionType.REVIEW_CONDITION_NOT_MET);
+        }
+        if (isReviewExists(order.getId())) {
+            throw new CustomException(ExceptionType.DUPLICATE_RESOURCE, "이미 해당 주문에 대한 리뷰가 존재합니다.");
+        }
+    }
+
+    private void validateReviewUpdate(Review review, User user) {
+        if (!review.getUser().equals(user)) {
+            throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
+        }
+    }
+
+    private void validateReviewDeletion(Review review, User user) {
+        if (!review.getUser().equals(user)) {
+            throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
+        }
     }
 }

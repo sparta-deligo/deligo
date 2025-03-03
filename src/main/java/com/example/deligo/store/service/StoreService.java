@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,7 +22,8 @@ public class StoreService {
         List<Store> stores = storeRepository.findAll();
         return stores.stream()
                 .map(store -> {
-                    double averageRating = reviewRepository.findAverageRatingByStoreId(store.getId());
+                    Optional<Double> optionalAverage = reviewRepository.findAverageRatingByStoreId(store.getId());
+                    double averageRating = optionalAverage.orElse(0.0);
                     return StoreResponse.from(store, averageRating);
                 })
                 .collect(Collectors.toList());

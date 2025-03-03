@@ -9,15 +9,15 @@ import java.time.LocalDateTime;
 
 @Getter
 public class ReviewResponse extends BaseTimeEntity {
-    private final Long id;
-    private final Long userId;
-    private final Long orderId;
-    private final int rating;
-    private final String content;
-    private final LocalDateTime deletedAt;
-    private final String ownerComment;
+    private Long id;
+    private Long userId;
+    private Long orderId;
+    private int rating;
+    private String content;
+    private LocalDateTime deletedAt;
+    private String ownerComment;
 
-    private ReviewResponse(Review review) {
+    public ReviewResponse(Review review) {
         this.id = review.getId();
         this.userId = review.getUser().getId();
         this.orderId = review.getOrder().getId();
