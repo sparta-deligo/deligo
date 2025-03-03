@@ -46,6 +46,23 @@ public class MenuService {
         return MenuResponse.from(menu);
     }
 
+    @Transactional
+    public MenuResponse update(Long userId, Long menuId, UpdateMenuRequest request) {
+        User owner = getOwner(userId);
+        Menu menu = getMenu(menuId);
+        if(!menu.getStore().getOwner().equals(owner)) {
+            throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
+        }
+
+        menu.update(
+                request.getName(),
+                request.getDescription(),
+                request.getPrice(),
+                MenuStatus.valueOf(request.getStatus())
+        );
+
+        return MenuResponse.from(menu);
+    }
 
 
     private User getOwner(Long userId) {
@@ -57,6 +74,10 @@ public class MenuService {
         return user;
     }
 
+    private Menu getMenu(Long menuId) {
+        return menuRepository.findById(menuId)
+                .orElseThrow(() -> new CustomException(ExceptionType.MENU_NOT_FOUND));
+    }
 
     private User getUser(Long userId) {
         return userRepository.findById(userId)

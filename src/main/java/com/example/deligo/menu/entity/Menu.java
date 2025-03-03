@@ -43,4 +43,11 @@ public class Menu extends BaseDeletableEntity {
         this.price = price;
         this.status = status;
     }
+
+    public void update(String name, String description, BigDecimal price, MenuStatus status) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.status = status;
+    }
 }
