@@ -1,7 +1,6 @@
 package com.example.deligo.store.controller;
 
 <<<<<<< HEAD
-import com.example.deligo.store.dto.StoreResponse;
 import com.example.deligo.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +15,9 @@ import com.example.deligo.store.dto.request.StoreSaveRequestDto;
 import com.example.deligo.store.dto.request.StoreUpdateRequestDto;
 import com.example.deligo.store.dto.response.StoreResponseDto;
 import com.example.deligo.store.dto.response.StoreSaveResponseDto;
-import com.example.deligo.store.entity.Store;
-import com.example.deligo.store.service.StoreService;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 >>>>>>> feature/store
 @RestController
 @RequestMapping("/stores")

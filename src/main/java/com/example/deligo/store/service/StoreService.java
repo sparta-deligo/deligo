@@ -1,18 +1,5 @@
 package com.example.deligo.store.service;
 
-<<<<<<< HEAD
-import com.example.deligo.review.repository.ReviewRepository;
-import com.example.deligo.store.dto.StoreResponse;
-import com.example.deligo.store.entity.Store;
-import com.example.deligo.store.repository.StoreRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-=======
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.common.exception.ExceptionType;
 import com.example.deligo.store.dto.request.StoreSaveRequestDto;
@@ -29,27 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
->>>>>>> feature/store
 @Service
 @RequiredArgsConstructor
 public class StoreService {
 
     private final StoreRepository storeRepository;
-<<<<<<< HEAD
-    private final ReviewRepository reviewRepository;
-
-    public List<StoreResponse> getStoresWithRatings() {
-        List<Store> stores = storeRepository.findAll();
-        return stores.stream()
-                .map(store -> {
-                    Optional<Double> optionalAverage = reviewRepository.findAverageRatingByStoreId(store.getId());
-                    double averageRating = optionalAverage.orElse(0.0);
-                    return StoreResponse.from(store, averageRating);
-                })
-                .collect(Collectors.toList());
-    }
-}
-=======
     private final UserRepository userRepository;
 
     //가게 생성
@@ -158,5 +129,3 @@ public class StoreService {
         storeRepository.deleteById(id);
     }
 }
-
->>>>>>> feature/store
