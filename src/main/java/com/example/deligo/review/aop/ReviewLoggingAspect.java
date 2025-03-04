@@ -8,7 +8,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -32,7 +31,9 @@ public class ReviewLoggingAspect {
 
     @Before("execution(* com.example.deligo.review.service.ReviewService.getReviewsByStore(..))")
     public void logBeforeGetReviewsByStore(JoinPoint joinPoint) {
-        log.info("[리뷰 조회 요청] - 메서드: {} | 파라미터: {}", joinPoint.getSignature(), Arrays.toString(joinPoint.getArgs()));
+        Object[] args = joinPoint.getArgs();
+        Long storeId = (args.length > 0) && args[0] instanceof Long ? (Long) args[0] : null;
+        log.info("[리뷰 조회 요청] - 메서드: {} | 가게: {}", joinPoint.getSignature(), storeId);
     }
 
     @AfterReturning(pointcut = "execution(* com.example.deligo.review.service.ReviewService.createReview(..))", returning = "result")
@@ -52,12 +53,14 @@ public class ReviewLoggingAspect {
 
     @AfterReturning(pointcut = "execution(* com.example.deligo.review.service.ReviewService.getReviewsByStore(..))", returning = "result")
     public void logAfterGetReviewsByStore(JoinPoint joinPoint, Object result) {
-        int resultSize = (result instanceof List) ? ((List<?>) result).size() : -1;
+        Long resultSize = (result instanceof List) ? ((List<?>) result).size() :
+                (result instanceof org.springframework.data.domain.Page) ? ((org.springframework.data.domain.Page<?>) result).getTotalElements() : -1;
         log.info("[리뷰 조회 완료] - 메서드: {} | 결과 개수: {}", joinPoint.getSignature(), resultSize);
     }
 
     @AfterThrowing(pointcut = "execution(* com.example.deligo.review.service.ReviewService.*(..))",throwing = "exception")
     public void logExceptionInReviewService(JoinPoint joinPoint, Exception exception) {
+        Object[] args = joinPoint.getArgs();
         log.error("[리뷰 처리 중 예외 발생] - 메서드: {} | 예외: {}", joinPoint.getSignature(), exception.getMessage(), exception);
     }
 }
