@@ -3,10 +3,8 @@ package com.example.deligo.order.service.orderServ;
 import com.example.deligo.menu.entity.Menu;
 import com.example.deligo.menu.entity.MenuStatus;
 import com.example.deligo.menu.repository.MenuRepository;
-import com.example.deligo.order.dto.request.SaveReq;
-import com.example.deligo.order.dto.response.SaveResp;
-import com.example.deligo.order.entity.Order;
-import com.example.deligo.order.entity.OrderItem;
+import com.example.deligo.order.dto.request.SaveRequest;
+import com.example.deligo.order.dto.response.SaveResponse;
 import com.example.deligo.order.repository.OrderItemRepository;
 import com.example.deligo.order.repository.OrderRepository;
 import com.example.deligo.store.entity.Store;
@@ -16,16 +14,13 @@ import com.example.deligo.store.repository.StoreRepository;
 import com.example.deligo.user.entity.User;
 import com.example.deligo.user.entity.UserRole;
 import com.example.deligo.user.repository.UserRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,15 +58,15 @@ class OrderServiceTest {
 
         User user = new User("testEmail", "testPw", "testName", UserRole.USER);
         Store store = new Store(user, "testStore", StoreCategory.CHICKEN, LocalTime.now(), LocalTime.now(), 5, StoreStatus.OPEN);
-        SaveReq saveReq = new SaveReq(deliverAddress, menuIds, quantity, riderComment, storeComment, storeId);
+        SaveRequest saveRequest = new SaveRequest(deliverAddress, menuIds, quantity, riderComment, storeComment, storeId);
         List<Menu> menus = new ArrayList<>();
         menus.add(new Menu(store, "testMenu1", "desc", new BigDecimal("10.5"), MenuStatus.AVAILABLE));
         menus.add(new Menu(store, "testMenu2", "desc", new BigDecimal("10.5"), MenuStatus.AVAILABLE));
 
         /*when*/
-        SaveResp saveResp = orderService.saveOrder(user, store, menus, saveReq);
+        SaveResponse saveResponse = orderService.saveOrder(user, store, menus, saveRequest);
 
         /*then*/
-        assertNotNull(saveResp);
+        assertNotNull(saveResponse);
     }
 }

@@ -2,8 +2,8 @@ package com.example.deligo.order.service.orderServ;
 
 import com.example.deligo.menu.entity.Menu;
 import com.example.deligo.menu.repository.MenuRepository;
-import com.example.deligo.order.dto.request.SaveReq;
-import com.example.deligo.order.dto.response.SaveResp;
+import com.example.deligo.order.dto.request.SaveRequest;
+import com.example.deligo.order.dto.response.SaveResponse;
 import com.example.deligo.order.entity.Order;
 import com.example.deligo.order.entity.OrderItem;
 import com.example.deligo.order.repository.OrderItemRepository;
@@ -33,30 +33,25 @@ public class OrderServiceImpl implements OrderService {
     private final MenuRepository menuServ;
 
     @Override
-    public SaveResp saveOrder(User user, Store store, List<Menu> menus, SaveReq saveReq) {
-        List<Long> menuIds = saveReq.getMenuIds();
+    public SaveResponse saveOrder(User user, Store store, List<Menu> menus, SaveRequest saveRequest) {
+        List<Long> menuIds = saveRequest.getMenuIds();
 
-        Order order = new Order(user, store, new ArrayList<>(), saveReq);
+        Order order = new Order(user, store, new ArrayList<>(), saveRequest);
         orderRepo.save(order);
 
         List<OrderItem> orderItems = menus.stream()
                 .map(menu -> {
-                    OrderItem orderItem = new OrderItem(menu, order, menu.getPrice(), saveReq.getQuantity());
+                    OrderItem orderItem = new OrderItem(menu, order, menu.getPrice(), saveRequest.getQuantity());
                     order.addOrderItems(orderItem);
                     return orderItem;
                 })
                 .toList();
-
-//        List<OrderItem> orderItems = menuIds.stream()
-//                .map(id -> {
-//                    Menu menu = menuServ.findById(id).get();
-//                    OrderItem orderItem = new OrderItem(menu, order, menu.getPrice(), saveReq.getQuantity());
-//                    order.addOrderItems(orderItem);
-//                    return orderItem;
-//                })
-//                .toList();
         orderItemRepo.saveAll(orderItems);
 
-        return new SaveResp(order);
+        return new SaveResponse(order);
+    }
+
+    public void findById(Long id) {
+
     }
 }

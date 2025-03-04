@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class SaveReq {
+public class SaveRequest {
 
     @Positive
     @NotNull
@@ -33,7 +33,7 @@ public class SaveReq {
     @NotNull
     private String riderComment;
 
-    public SaveReq(String deliverAddress, List<Long> menuIds, int quantity, String riderComment, String storeComment, Long storeId) {
+    public SaveRequest(String deliverAddress, List<Long> menuIds, int quantity, String riderComment, String storeComment, Long storeId) {
         this.deliverAddress = deliverAddress;
         this.menuIds = menuIds;
         this.quantity = quantity;
