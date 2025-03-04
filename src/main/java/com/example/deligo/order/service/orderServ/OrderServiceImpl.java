@@ -1,8 +1,10 @@
 package com.example.deligo.order.service.orderServ;
 
+import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.menu.entity.Menu;
 import com.example.deligo.menu.repository.MenuRepository;
 import com.example.deligo.order.dto.request.SaveRequest;
+import com.example.deligo.order.dto.response.FindResponse;
 import com.example.deligo.order.dto.response.SaveResponse;
 import com.example.deligo.order.entity.Order;
 import com.example.deligo.order.entity.OrderItem;
@@ -18,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.deligo.common.exception.ExceptionType.ORDER_NOT_FOUND;
 
 @Repository
 @Transactional
@@ -51,7 +55,10 @@ public class OrderServiceImpl implements OrderService {
         return new SaveResponse(order);
     }
 
-    public void findById(Long id) {
+    @Override
+    public FindResponse findById(Long id) {
+        Order order = orderRepo.findById(id).orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
 
+        return new FindResponse(order);
     }
 }
