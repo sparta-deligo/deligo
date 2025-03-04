@@ -128,4 +128,11 @@ public class StoreService {
 
         storeRepository.deleteById(id);
     }
+
+    @Transactional
+    public void updateStoreAverageRating(Long storeId, Double averageRating) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new CustomException(ExceptionType.STORE_NOT_FOUND));
+        store.updateAverageRating(averageRating);
+    }
 }

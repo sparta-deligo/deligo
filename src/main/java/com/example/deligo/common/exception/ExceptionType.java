@@ -10,6 +10,9 @@ public enum ExceptionType {
     EMAIL_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "해당 이메일로 가입한 계정이 존재합니다."),
     REVIEW_CONDITION_NOT_MET(HttpStatus.BAD_REQUEST, "배달 완료되지 않은 주문은 리뷰를 작성할 수 없습니다."),
     REVIEW_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "해당 주문에 대한 리뷰가 이미 존재합니다."),
+    REVIEW_ALREADY_HAS_COMMENT(HttpStatus.BAD_REQUEST, "해당 리뷰에 대한 댓글이 이미 존재합니다."),
+    DUPLICATE_OWNER_COMMENT(HttpStatus.BAD_REQUEST, "해당 리뷰에는 이미 사장님 댓글이 존재합니다."), // 🔹 추가
+    OWNER_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사장님 댓글을 찾을 수 없습니다."), // 🔹 추가
 
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "로그인 정보가 올바르지 않습니다."),

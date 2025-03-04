@@ -1,4 +1,4 @@
-package com.example.deligo.review.dto;
+package com.example.deligo.review.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

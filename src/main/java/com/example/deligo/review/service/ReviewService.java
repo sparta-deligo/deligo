@@ -4,8 +4,8 @@ import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.common.exception.ExceptionType;
 import com.example.deligo.order.entity.Order;
 import com.example.deligo.order.repository.OrderRepository;
-import com.example.deligo.review.dto.ReviewRequest;
-import com.example.deligo.review.dto.ReviewResponse;
+import com.example.deligo.review.dto.request.ReviewRequest;
+import com.example.deligo.review.dto.response.ReviewResponse;
 import com.example.deligo.review.entity.Review;
 import com.example.deligo.review.repository.OwnerCommentRepository;
 import com.example.deligo.review.repository.ReviewRepository;
@@ -26,26 +26,40 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
-    private final ReviewServiceHelper reviewServiceHelper;
     private final OwnerCommentRepository ownerCommentRepository;
 
     @Transactional(readOnly = true)
     public Page<ReviewResponse> getReviewsByStore(Long storeId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Review> reviews = reviewRepository.findByStoreId(storeId, pageable);
-        Map<Long, String> ownerComments = ownerCommentRepository.findByStoreId(storeId).stream()
-                .collect(Collectors.toMap(comment -> comment.getReview().getId(), comment -> comment.getContent()));
+        Map<Long, String> ownerComments = getOwnerCommentsByStore(storeId);
 
-        return reviews.map(review -> new ReviewResponse(review, ownerComments.get(review.getId())));
+        return reviews.map(review ->
+                new ReviewResponse(review, ownerComments.getOrDefault(review.getId(), "사장님 댓글이 없습니다."))
+        );
+    }
+
+    private Map<Long, String> getOwnerCommentsByStore(Long storeId) {
+        return ownerCommentRepository.findByStoreId(storeId).stream()
+                .collect(Collectors.toMap(
+                        comment -> comment.getReview().getId(),
+                        comment -> comment.getContent(),
+                        (existing, replacement) -> existing
+                ));
     }
 
     @Transactional
     public ReviewResponse createReview(User user, ReviewRequest request) {
         Order order = getOrderById(request.getOrderId());
 
+        if (!order.getUser().equals(user)) {
+            throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
+        }
+
         if (!order.isCompleted()) {
             throw new CustomException(ExceptionType.REVIEW_CONDITION_NOT_MET);
         }
+
         reviewRepository.findByOrderId(order.getId()).ifPresent(existing -> {
             throw new CustomException(ExceptionType.REVIEW_ALREADY_EXISTS);
         });
@@ -58,7 +72,6 @@ public class ReviewService {
                 .build();
 
         reviewRepository.save(review);
-        reviewServiceHelper.updateStoreAverageRating(order.getStore().getId());
 
         return new ReviewResponse(review, null);
     }
@@ -72,7 +85,6 @@ public class ReviewService {
         }
 
         review.updateReview(user, request.getRating(), request.getContent());
-        reviewServiceHelper.updateStoreAverageRating(review.getOrder().getStore().getId());
 
         return new ReviewResponse(review, null);
     }
@@ -86,12 +98,6 @@ public class ReviewService {
         }
 
         review.deleteReview(user);
-        reviewServiceHelper.updateStoreAverageRating(review.getOrder().getStore().getId());
-    }
-
-    @Transactional(readOnly = true)
-    public boolean isReviewExists(Long orderId) {
-        return reviewRepository.findByOrderId(orderId).isPresent();
     }
 
     private Order getOrderById(Long orderId) {

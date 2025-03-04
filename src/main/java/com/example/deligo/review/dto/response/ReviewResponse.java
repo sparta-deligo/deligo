@@ -1,4 +1,4 @@
-package com.example.deligo.review.dto;
+package com.example.deligo.review.dto.response;
 
 import com.example.deligo.review.entity.OwnerComment;
 import com.example.deligo.review.entity.Review;

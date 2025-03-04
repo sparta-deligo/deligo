@@ -4,8 +4,8 @@ import com.example.deligo.common.dto.PaginationResponse;
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.common.exception.ExceptionType;
 import com.example.deligo.common.jwt.JwtUtil;
-import com.example.deligo.review.dto.ReviewRequest;
-import com.example.deligo.review.dto.ReviewResponse;
+import com.example.deligo.review.dto.request.ReviewRequest;
+import com.example.deligo.review.dto.response.ReviewResponse;
 import com.example.deligo.review.service.ReviewService;
 import com.example.deligo.user.entity.User;
 import com.example.deligo.user.service.UserService;
@@ -31,7 +31,7 @@ public class ReviewController {
             throw new CustomException(ExceptionType.UNAUTHORIZED);
         }
         String jwt = token.substring(7);
-        return userService.findById(jwtUtil.getUserIdFromToken(jwt)); // UserService 구현 되어야함
+        return userService.findById(jwtUtil.getUserIdFromToken(jwt)); // UserService 에서 구현되어야함
     }
 
     @PostMapping
