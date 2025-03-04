@@ -1,6 +1,6 @@
 package com.example.deligo.store.entity;
 import com.example.deligo.common.entity.BaseDeletableEntity;
-import com.example.deligo.common.enums.StoreStatus;
+import com.example.deligo.store.dto.request.StoreUpdateRequestDto;
 import com.example.deligo.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -45,6 +45,15 @@ public class Store extends BaseDeletableEntity {
             LocalTime closeTime, int minOrderAmount, StoreStatus status
     ) {
         this.owner = user;
+        this.name = name;
+        this.category = category;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+        this.minOrderAmount = minOrderAmount;
+        this.status = status;
+    }
+
+    public void Update(StoreUpdateRequestDto dto) {
         this.name = name;
         this.category = category;
         this.openTime = openTime;
