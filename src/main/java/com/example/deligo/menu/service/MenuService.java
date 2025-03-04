@@ -8,6 +8,7 @@ import com.example.deligo.menu.dto.response.MenuResponse;
 import com.example.deligo.menu.entity.Menu;
 import com.example.deligo.menu.entity.MenuStatus;
 import com.example.deligo.menu.repository.MenuRepository;
+import com.example.deligo.order.repository.OrderRepository;
 import com.example.deligo.store.entity.Store;
 import com.example.deligo.store.repository.StoreRepository;
 import com.example.deligo.user.entity.User;
@@ -24,6 +25,7 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
+    private final OrderRepository orderRepository;
 
     @Transactional
     public MenuResponse create(Long userId, CreateMenuRequest request) {
@@ -72,7 +74,7 @@ public class MenuService {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
         }
 
-        // TODO : 해당 메뉴가 포함된 '진행 중'인 주문이 있는 경우 삭제 불가 처리, 주문 기능 완료 시 추가 예정
+        validateNoActiveOrders(menu);
 
         menu.updateStatus(MenuStatus.DELETED);
         menu.softDelete();
@@ -100,5 +102,11 @@ public class MenuService {
     private Store getStore(Long storeId) {
         return storeRepository.findById(storeId)
                 .orElseThrow(() -> new CustomException(ExceptionType.STORE_NOT_FOUND));
+    }
+
+    private void validateNoActiveOrders(Menu menu) {
+        if(orderRepository.existsActiveOrderByMenuId(menu.getId())) {
+            throw new CustomException(ExceptionType.ACTIVE_ORDER_EXISTS);
+        }
     }
 }
