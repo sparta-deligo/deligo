@@ -36,8 +36,7 @@ public class OrderController {
                                                   @Valid @RequestBody SaveRequest saveRequest) {
         User user = userServ.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         Store store = storeServ.findById(saveRequest.getStoreId()).orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
-        List<Long> menuIds = saveRequest.getMenuIds();
-        List<Menu> menus = menuIds.stream()
+        List<Menu> menus = saveRequest.getMenuIds().stream()
                 .map(id -> menuServ.findById(id).orElseThrow(() -> new CustomException(MENU_NOT_FOUND)))
                 .toList();
 
