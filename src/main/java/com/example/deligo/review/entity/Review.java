@@ -51,7 +51,7 @@ public class Review extends BaseDeletableEntity {
             throw new CustomException(ExceptionType.REVIEW_CONDITION_NOT_MET);
         }
         if (order.getReview() != null) {
-            throw new CustomException(ExceptionType.DUPLICATE_RESOURCE, "이미 작성된 리뷰가 있습니다.");
+            throw new CustomException(ExceptionType.REVIEW_ALREADY_EXISTS);
         }
         validateRating(rating);
         validateContent(content);
@@ -103,7 +103,7 @@ public class Review extends BaseDeletableEntity {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
         }
         if (this.ownerComment != null) {
-            throw new CustomException(ExceptionType.DUPLICATE_RESOURCE, "이미 댓글이 작성되었습니다.");
+            throw new CustomException(ExceptionType.REVIEW_ALREADY_EXISTS);
         }
     }
 

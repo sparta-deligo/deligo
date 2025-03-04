@@ -8,16 +8,16 @@ import java.time.LocalDateTime;
 
 @Getter
 public class ReviewResponse {
-    private Long id;
-    private Long userId;
-    private Long orderId;
-    private int rating;
-    private String content;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private String ownerComment;
+    private final Long id;
+    private final Long userId;
+    private final Long orderId;
+    private final int rating;
+    private final String content;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime updatedAt;
+    private final String ownerComment;
 
-    public ReviewResponse(Review review) {
+    public ReviewResponse(Review review, String ownerComment) {
         this.id = review.getId();
         this.userId = review.getUser().getId();
         this.orderId = review.getOrder().getId();
@@ -25,16 +25,13 @@ public class ReviewResponse {
         this.content = review.getContent();
         this.createdAt = review.getCreatedAt();
         this.updatedAt = review.getUpdatedAt();
-        this.ownerComment = extractOwnerComment(review);
-    }
-
-    private String extractOwnerComment(Review review) {
-        return review.getOwnerComment()
-                .map(OwnerComment::getContent)
-                .orElse(null);
+        this.ownerComment = ownerComment;
     }
 
     public static ReviewResponse from(Review review) {
-        return new ReviewResponse(review);
+        String ownerComment = review.getOwnerComment()
+                .map(OwnerComment::getContent)
+                .orElse(null);
+        return new ReviewResponse(review, ownerComment);
     }
 }

@@ -8,13 +8,14 @@ import com.example.deligo.review.dto.ReviewRequest;
 import com.example.deligo.review.dto.ReviewResponse;
 import com.example.deligo.review.service.ReviewService;
 import com.example.deligo.user.entity.User;
-import com.example.deligo.user.repository.UserRepository;
+import com.example.deligo.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/reviews")
@@ -23,18 +24,14 @@ public class ReviewController {
 
     private final ReviewService reviewService;
     private final JwtUtil jwtUtil;
-    private final UserRepository userRepository; // UserService 완성 시 변경할 예정
+    private final UserService userService;
 
     private User getAuthenticatedUser(String token) {
         if (token == null || !token.startsWith("Bearer ")) {
             throw new CustomException(ExceptionType.UNAUTHORIZED);
         }
-
         String jwt = token.substring(7);
-        Long userId = jwtUtil.getUserIdFromToken(jwt);
-
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        return userService.findById(jwtUtil.getUserIdFromToken(jwt)); // UserService 구현 되어야함
     }
 
     @PostMapping
@@ -44,7 +41,7 @@ public class ReviewController {
     ) {
         User user = getAuthenticatedUser(token);
         ReviewResponse response = reviewService.createReview(user, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.created(URI.create("/reviews/" + response.getId())).body(response);
     }
 
     @PutMapping("/{reviewId}")
@@ -67,7 +64,7 @@ public class ReviewController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/stores/{storeId}/reviews")
+    @GetMapping("/store/{storeId}")
     public ResponseEntity<PaginationResponse<ReviewResponse>> getReviewsByStore(
             @PathVariable Long storeId,
             @RequestParam(defaultValue = "0") int page,
