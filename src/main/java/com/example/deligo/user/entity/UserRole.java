@@ -7,3 +7,4 @@ public enum UserRole {
     USER, OWNER
 >>>>>>> feature/store
 }
+
