@@ -1,4 +1,4 @@
-package com.example.deligo.store.dto.request;
+package com.example.deligo.store.dto.Request;
 
 import com.example.deligo.store.entity.StoreCategory;
 import com.example.deligo.store.entity.StoreStatus;

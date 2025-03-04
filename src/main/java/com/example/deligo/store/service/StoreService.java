@@ -2,10 +2,10 @@ package com.example.deligo.store.service;
 
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.common.exception.ExceptionType;
-import com.example.deligo.store.dto.request.StoreSaveRequestDto;
-import com.example.deligo.store.dto.request.StoreUpdateRequestDto;
-import com.example.deligo.store.dto.response.StoreResponseDto;
-import com.example.deligo.store.dto.response.StoreSaveResponseDto;
+import com.example.deligo.store.dto.Request.StoreSaveRequestDto;
+import com.example.deligo.store.dto.Request.StoreUpdateRequestDto;
+import com.example.deligo.store.dto.Response.StoreResponseDto;
+import com.example.deligo.store.dto.Response.StoreSaveResponseDto;
 import com.example.deligo.store.entity.Store;
 import com.example.deligo.store.repository.StoreRepository;
 import com.example.deligo.user.entity.User;

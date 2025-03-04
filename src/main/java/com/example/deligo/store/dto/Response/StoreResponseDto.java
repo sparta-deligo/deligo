@@ -1,10 +1,9 @@
-package com.example.deligo.store.dto.response;
+package com.example.deligo.store.dto.Response;
 
 import com.example.deligo.store.entity.StoreCategory;
 import com.example.deligo.store.entity.StoreStatus;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter

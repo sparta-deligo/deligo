@@ -1,10 +1,9 @@
 package com.example.deligo.store.controller;
 
-import com.example.deligo.store.dto.request.StoreSaveRequestDto;
-import com.example.deligo.store.dto.request.StoreUpdateRequestDto;
-import com.example.deligo.store.dto.response.StoreResponseDto;
-import com.example.deligo.store.dto.response.StoreSaveResponseDto;
-import com.example.deligo.store.entity.Store;
+import com.example.deligo.store.dto.Request.StoreSaveRequestDto;
+import com.example.deligo.store.dto.Request.StoreUpdateRequestDto;
+import com.example.deligo.store.dto.Response.StoreResponseDto;
+import com.example.deligo.store.dto.Response.StoreSaveResponseDto;
 import com.example.deligo.store.service.StoreService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
