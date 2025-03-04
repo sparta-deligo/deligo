@@ -5,7 +5,11 @@ import com.example.deligo.menu.entity.Menu;
 import com.example.deligo.menu.repository.MenuRepository;
 import com.example.deligo.order.dto.request.SaveRequest;
 import com.example.deligo.order.dto.response.FindResponse;
+import com.example.deligo.order.dto.response.OrderCancelResponse;
 import com.example.deligo.order.dto.response.SaveResponse;
+import com.example.deligo.order.dto.response.SetStatusResponse;
+import com.example.deligo.order.entity.Order;
+import com.example.deligo.order.entity.OrderStatus;
 import com.example.deligo.order.service.orderServ.OrderService;
 import com.example.deligo.store.entity.Store;
 import com.example.deligo.store.repository.StoreRepository;
@@ -50,6 +54,17 @@ public class OrderController {
     public ResponseEntity<FindResponse> checkOrder(@PathVariable Long orderId) {
         return ResponseEntity.ok().body(orderServ.findById(orderId));
     }
+
+    @PatchMapping("/orderId")
+    public ResponseEntity<OrderCancelResponse> cancelOrder(@PathVariable Long orderId, HttpServletRequest request) {
+        Long loginUserId = getLoginUserId(request);
+        return ResponseEntity.ok().body(orderServ.cancelOrder(loginUserId, orderId));
+    }
+
+    @PatchMapping("/{orderId}/{orderStatus}")
+    public ResponseEntity<SetStatusResponse> editOrderStatus(@PathVariable Long orderId, @PathVariable OrderStatus orderStatus, HttpServletRequest request) {
+        return ResponseEntity.ok().body(orderServ.setOrderStatus(getLoginUserId(request), orderId, orderStatus));
+   }
 
     private static Long getLoginUserId(HttpServletRequest request) {
         return (Long) request.getAttribute("userId");

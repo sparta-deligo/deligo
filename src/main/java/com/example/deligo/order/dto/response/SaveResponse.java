@@ -2,6 +2,7 @@ package com.example.deligo.order.dto.response;
 
 import com.example.deligo.order.entity.Order;
 import com.example.deligo.order.entity.OrderItem;
+import com.example.deligo.order.entity.OrderStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,6 +20,7 @@ public class SaveResponse {
     private String riderComment;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private OrderStatus orderStatus;
 
     public SaveResponse(Order order) {
         List<OrderItem> orderItems = order.getOrderItems();
@@ -32,5 +34,6 @@ public class SaveResponse {
         this.riderComment = order.getRiderComment();
         this.storeComment = order.getStoreComment();
         this.updatedAt = order.getUpdatedAt();
+        this.orderStatus = order.getStatus();
     }
 }

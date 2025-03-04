@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.deligo.order.entity.OrderStatus.CANCELED;
 import static com.example.deligo.order.entity.OrderStatus.ORDER_RECEIVED;
 
 @Entity
@@ -33,10 +34,6 @@ public class Order extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     private Store store;
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "menu_id")
-//    private Menu menu = new ArrayList<>();
 
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems = new ArrayList<>();
@@ -73,5 +70,13 @@ public class Order extends BaseTimeEntity {
 
     public void addOrderItems(OrderItem orderItem) {
         this.orderItems.add(orderItem);
+    }
+
+    public void cancelOrder() {
+        this.status = CANCELED;
+    }
+
+    public void setOrderStatus(OrderStatus status) {
+        this.status = status;
     }
 }
