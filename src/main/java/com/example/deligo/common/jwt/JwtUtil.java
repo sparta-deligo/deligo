@@ -42,8 +42,15 @@ public class JwtUtil {
                     .parseClaimsJws(token)
                     .getBody();
             return Long.parseLong(claims.getSubject());
-        } catch (JwtException e) {
-            throw new CustomException(ExceptionType.INVALID_REQUEST, "잘못된 토큰입니다.");
+        } catch (ExpiredJwtException e) {
+            log.error("토큰 만료: {}", token);
+            throw new CustomException(ExceptionType.TOKEN_EXPIRED);
+        } catch (UnsupportedJwtException | MalformedJwtException | IllegalArgumentException e) {
+            log.error("유효하지 않은 토큰: {}", token);
+            throw new CustomException(ExceptionType.TOKEN_INVALID);
+        } catch (SignatureException e) {
+            log.error("토큰 서명 오류: {}", token);
+            throw new CustomException(ExceptionType.TOKEN_SIGNATURE_INVALID);
         }
     }
 
@@ -52,9 +59,14 @@ public class JwtUtil {
             Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException e) {
-            throw new CustomException(ExceptionType.INVALID_REQUEST, "토큰이 만료되었습니다.");
+            log.error("토큰 만료: {}", token);
+            throw new CustomException(ExceptionType.TOKEN_EXPIRED);
+        } catch (SignatureException e) {
+            log.error("토큰 서명 오류: {}", token);
+            throw new CustomException(ExceptionType.TOKEN_SIGNATURE_INVALID);
         } catch (JwtException | IllegalArgumentException e) {
-            throw new CustomException(ExceptionType.INVALID_REQUEST, "유효하지 않은 토큰입니다.");
+            log.error("유효하지 않은 토큰: {}", token);
+            throw new CustomException(ExceptionType.TOKEN_INVALID);
         }
     }
 }
