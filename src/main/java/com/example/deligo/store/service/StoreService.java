@@ -1,5 +1,7 @@
 package com.example.deligo.store.service;
 
+import com.example.deligo.common.exception.CustomException;
+import com.example.deligo.common.exception.ExceptionType;
 import com.example.deligo.store.dto.request.StoreSaveRequestDto;
 import com.example.deligo.store.dto.request.StoreUpdateRequestDto;
 import com.example.deligo.store.dto.response.StoreResponseDto;
@@ -14,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class StoreService {
@@ -29,7 +30,7 @@ public class StoreService {
                 ()-> new IllegalArgumentException("존재하지 않는 사용자입니다")
         );
         Store store = Store.builder()
-                .user(user)
+                .user(user) // userId로 사용자 객체 가져옴
                 .name(dto.getName())
                 .category(dto.getStoreCategory())
                 .openTime(dto.getOpenTime())
@@ -43,7 +44,7 @@ public class StoreService {
                 savedStore.getId(),
                 savedStore.getOwner().getId(),
                 savedStore.getName(),
-               savedStore.getCategory(),
+                savedStore.getCategory(),
                 savedStore.getOpenTime(),
                 savedStore.getCloseTime(),
                 savedStore.getMinOrderAmount(),
@@ -52,31 +53,28 @@ public class StoreService {
         );
     }
 
-    //모든 가게 조회
     @Transactional(readOnly = true)
     public List<StoreResponseDto> getAllStore() {
         List<Store> stores = storeRepository.findAll();
-       List<StoreResponseDto> dtos = new ArrayList<>();
-       for (Store store : stores) {
-           dtos.add(new StoreResponseDto(
-                   store.getId(),
-                   store.getOwner().getId(),
-                   store.getName(),
-                   store.getCategory(),
-                   store.getOpenTime(),
-                   store.getCloseTime(),
-                   store.getMinOrderAmount(),
-                   store.getStatus(),
-                   store.getAverageRating()));
-       }
-       return dtos;
+        List<StoreResponseDto> dtos = new ArrayList<>();
+        for (Store store : stores) {
+            dtos.add(new StoreResponseDto( store.getId(),
+                    store.getOwner().getId(),
+                    store.getName(),
+                    store.getCategory(),
+                    store.getOpenTime(),
+                    store.getCloseTime(),
+                    store.getMinOrderAmount(),
+                    store.getStatus(),
+                    store.getAverageRating()));
+        }
+        return dtos;
     }
 
-    //특정 가게 조회
     @Transactional(readOnly = true)
     public StoreResponseDto getByStoreID(Long id) {
         Store store = storeRepository.findById(id).orElseThrow(
-                ()-> new IllegalArgumentException("가게 id를 찾을 수 없습니다")
+                ()->new IllegalArgumentException("가게 id를 찾을 수 없습니다")
         );
         return new StoreResponseDto(
                 store.getId(),
@@ -93,10 +91,16 @@ public class StoreService {
 
     //가게 수정
     @Transactional
-    public StoreResponseDto updateStore(Long id, StoreUpdateRequestDto dto) {
+    public StoreResponseDto updateStore(Long id, StoreUpdateRequestDto dto, Long userId) {
         Store store = storeRepository.findById(id).orElseThrow(
-                ()-> new IllegalArgumentException("가게 id를 찾을 수 없습니다")
+                () -> new IllegalArgumentException("가게 id를 찾을 수 없습니다")
         );
+
+        // 로그인한 사용자와 해당 가게의 소유자가 같은지 확인
+        if (!store.getOwner().getId().equals(userId)) {
+            throw new CustomException(ExceptionType.UNAUTHORIZED); // 접근 권한이 없는 경우
+        }
+
         store.Update(dto);
         return new StoreResponseDto(
                 store.getId(),
@@ -112,7 +116,17 @@ public class StoreService {
 
     //가게 삭제
     @Transactional
-    public void deleteByStoreId(Long id) {
+    public void deleteByStoreId(Long id, Long userId) {
+        Store store = storeRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("가게 id를 찾을 수 없습니다")
+        );
+
+        // 로그인한 사용자와 해당 가게의 소유자가 같은지 확인
+        if (!store.getOwner().getId().equals(userId)) {
+            throw new CustomException(ExceptionType.UNAUTHORIZED); // 접근 권한이 없는 경우
+        }
+
         storeRepository.deleteById(id);
     }
 }
+
