@@ -26,17 +26,23 @@ public class JwtFilter implements Filter {
         String authHeader = httpRequest.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new CustomException(ExceptionType.UNAUTHORIZED, "토큰이 필요합니다.");
+            throw new CustomException(ExceptionType.TOKEN_MISSING);
         }
 
         String token = authHeader.substring(7);
-        if (!jwtUtil.validateToken(token)) {
-            throw new CustomException(ExceptionType.UNAUTHORIZED, "유효하지 않은 토큰입니다.");
+
+        try {
+            if (!jwtUtil.validateToken(token)) {
+                throw new CustomException(ExceptionType.TOKEN_INVALID);
+            }
+
+            Long userId = jwtUtil.getUserIdFromToken(token);
+            request.setAttribute("userId", userId);
+            chain.doFilter(request, response);
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new CustomException(ExceptionType.TOKEN_SIGNATURE_INVALID);
         }
-
-        Long userId = jwtUtil.getUserIdFromToken(token);
-        request.setAttribute("userId", userId);
-
-        chain.doFilter(request, response);
     }
 }
