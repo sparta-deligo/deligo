@@ -1,68 +1,55 @@
 package com.example.deligo.store.entity;
-
-import com.example.deligo.common.entity.BaseEntity;
+import com.example.deligo.common.entity.BaseDeletableEntity;
 import com.example.deligo.common.enums.StoreStatus;
+import com.example.deligo.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.awt.*;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
+@Table(name = "stores")
 @Getter
-@NoArgsConstructor
-@Table(name = "store")
-@AllArgsConstructor
-public class Store extends BaseEntity {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Store extends BaseDeletableEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
-    private String name; //가게 이름
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User owner;
 
-    @Column(nullable = false)
-    private LocalTime openTime; //가게 open 시간
-
-    @Column(nullable = false)
-    private LocalTime closeTime; //가게 close 시간
-
-    @Column(nullable = false)
-    private int minOrderAmount; //가게 최소 주문 금액
-
-    @Column(nullable = false)
-    private String category; //가게 카테고리
+    private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private StoreStatus status; //가게 상태
+    private StoreCategory category;
 
-   /* @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User owner; //사장 아이디
+    private LocalTime openTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id", nullable = false)
-    private Menu menu; //가게 메뉴
+    private LocalTime closeTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false)
-    private Order order; // 가게 주문*/
+    @Enumerated(EnumType.STRING)
+    private StoreStatus status;
 
-    @Column(nullable = false)
-    private Double average_rating = 0.0; //별점 평균
+    private int minOrderAmount;
 
-    public Store(String name) {}
+    private double averageRating = 0.0;
 
-    public void update(String name, LocalTime openTime, LocalTime closeTime, int minOrderAmount, String category, StoreStatus status){
+    @Builder
+    public Store(
+            User user, String name, StoreCategory category, LocalTime openTime,
+            LocalTime closeTime, int minOrderAmount, StoreStatus status
+    ) {
+        this.owner = user;
         this.name = name;
+        this.category = category;
         this.openTime = openTime;
         this.closeTime = closeTime;
         this.minOrderAmount = minOrderAmount;
-        this.category = category;
         this.status = status;
     }
 }
