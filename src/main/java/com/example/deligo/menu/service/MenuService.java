@@ -67,7 +67,7 @@ public class MenuService {
 
     private User getOwner(Long userId) {
         User user = getUser(userId);
-        if(!user.getRole().equals(UserRole.ADMIN)) {
+        if(!user.getRole().equals(UserRole.OWNER)) {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
         }
 
