@@ -41,6 +41,7 @@ public class Order extends BaseTimeEntity {
     private String riderComment;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private OrderStatus status;
 
     private LocalDateTime canceledAt = null;
