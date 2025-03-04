@@ -23,7 +23,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
     private final JwtUtil jwtUtil;
-    private final UserRepository userRepository;
+    private final UserRepository userRepository; // UserService 완성 시 변경할 예정
 
     private User getAuthenticatedUser(String token) {
         if (token == null || !token.startsWith("Bearer ")) {
