@@ -30,7 +30,6 @@ public class JwtFilter implements Filter {
         }
 
         String token = authHeader.substring(7);
-
         try {
             if (!jwtUtil.validateToken(token)) {
                 throw new CustomException(ExceptionType.TOKEN_INVALID);
