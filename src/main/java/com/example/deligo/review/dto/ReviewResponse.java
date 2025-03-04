@@ -1,6 +1,5 @@
 package com.example.deligo.review.dto;
 
-import com.example.deligo.common.entity.BaseTimeEntity;
 import com.example.deligo.review.entity.OwnerComment;
 import com.example.deligo.review.entity.Review;
 import lombok.Getter;
@@ -8,13 +7,14 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class ReviewResponse extends BaseTimeEntity {
+public class ReviewResponse {
     private Long id;
     private Long userId;
     private Long orderId;
     private int rating;
     private String content;
-    private LocalDateTime deletedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private String ownerComment;
 
     public ReviewResponse(Review review) {
@@ -23,8 +23,13 @@ public class ReviewResponse extends BaseTimeEntity {
         this.orderId = review.getOrder().getId();
         this.rating = review.getRating();
         this.content = review.getContent();
-        this.deletedAt = review.getDeletedAt();
-        this.ownerComment = review.getOwnerComment()
+        this.createdAt = review.getCreatedAt();
+        this.updatedAt = review.getUpdatedAt();
+        this.ownerComment = extractOwnerComment(review);
+    }
+
+    private String extractOwnerComment(Review review) {
+        return review.getOwnerComment()
                 .map(OwnerComment::getContent)
                 .orElse(null);
     }

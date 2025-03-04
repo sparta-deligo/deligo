@@ -3,20 +3,18 @@ package com.example.deligo.review.controller;
 import com.example.deligo.common.dto.PaginationResponse;
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.common.exception.ExceptionType;
+import com.example.deligo.common.jwt.JwtUtil;
 import com.example.deligo.review.dto.ReviewRequest;
 import com.example.deligo.review.dto.ReviewResponse;
 import com.example.deligo.review.service.ReviewService;
 import com.example.deligo.user.entity.User;
-import com.example.deligo.user.service.UserService;
+import com.example.deligo.user.repository.UserRepository;
 import jakarta.validation.Valid;
-import lombok.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/reviews")
@@ -24,43 +22,47 @@ import java.util.Optional;
 public class ReviewController {
 
     private final ReviewService reviewService;
-    private final UserService userService;
+    private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
-    private User getAuthenticatedUser(UserDetails userDetails) {
-        return Optional.ofNullable(userDetails)
-                .map(UserDetails::getUsername)
-                .map(String::trim)
-                .map(String::toLowerCase)
-                .flatMap(userService::findByEmail)
-                .orElseThrow(() -> new CustomException(ExceptionType.UNAUTHORIZED));
+    private User getAuthenticatedUser(String token) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            throw new CustomException(ExceptionType.UNAUTHORIZED);
+        }
+
+        String jwt = token.substring(7);
+        Long userId = jwtUtil.getUserIdFromToken(jwt);
+
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
     }
 
     @PostMapping
     public ResponseEntity<ReviewResponse> createReview(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestHeader("Authorization") String token,
             @Valid @RequestBody ReviewRequest request
     ) {
-        User user = getAuthenticatedUser(userDetails);
+        User user = getAuthenticatedUser(token);
         ReviewResponse response = reviewService.createReview(user, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{reviewId}")
     public ResponseEntity<ReviewResponse> updateReview(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestHeader("Authorization") String token,
             @PathVariable Long reviewId,
             @Valid @RequestBody ReviewRequest request
     ) {
-        User user = getAuthenticatedUser(userDetails);
+        User user = getAuthenticatedUser(token);
         return ResponseEntity.ok(reviewService.updateReview(user, reviewId, request));
     }
 
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(
-            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestHeader("Authorization") String token,
             @PathVariable Long reviewId
     ) {
-        User user = getAuthenticatedUser(userDetails);
+        User user = getAuthenticatedUser(token);
         reviewService.deleteReview(user, reviewId);
         return ResponseEntity.noContent().build();
     }

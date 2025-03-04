@@ -5,7 +5,6 @@ import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.common.exception.ExceptionType;
 import com.example.deligo.order.entity.Order;
 import com.example.deligo.user.entity.User;
-import jakarta.validation.constraints.*;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,11 +28,9 @@ public class Review extends BaseDeletableEntity {
     @JoinColumn(name = "order_id", nullable = false, unique = true)
     private Order order;
 
-    @Min(1) @Max(5)
     @Column(nullable = false)
     private int rating;
 
-    @NotBlank
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
@@ -42,52 +39,76 @@ public class Review extends BaseDeletableEntity {
 
     @Builder
     public Review(User user, Order order, int rating, String content) {
-        if(!order.isCompleted()) {
-            throw new CustomException(ExceptionType.REVIEW_CONDITION_NOT_MET);
-        }
-        if (order.getReview() != null) {
-            throw new CustomException(ExceptionType.DUPLICATE_RESOURCE);
-        }
-        if (rating < 1 || rating > 5) {
-            throw new CustomException(ExceptionType.INVALID_REQUEST, "별점은 1~5점 사이여야 합니다.");
-        }
+        validateReviewConditions(user, order, rating, content);
         this.user = user;
         this.order = order;
         this.rating = rating;
-        this.content = content;
+        this.content = content.trim();
+    }
+
+    private void validateReviewConditions(User user, Order order, int rating, String content) {
+        if (!order.isCompleted()) {
+            throw new CustomException(ExceptionType.REVIEW_CONDITION_NOT_MET);
+        }
+        if (order.getReview() != null) {
+            throw new CustomException(ExceptionType.DUPLICATE_RESOURCE, "이미 작성된 리뷰가 있습니다.");
+        }
+        validateRating(rating);
+        validateContent(content);
+    }
+
+    private void validateRating(int rating) {
+        if (rating < 1 || rating > 5) {
+            throw new CustomException(ExceptionType.INVALID_REQUEST, "별점은 1~5점 사이여야 합니다.");
+        }
+    }
+
+    private void validateContent(String content) {
+        if (content == null || content.trim().isEmpty()) {
+            throw new CustomException(ExceptionType.INVALID_REQUEST, "리뷰 내용은 비어 있을 수 없습니다.");
+        }
     }
 
     public void updateReview(User user, int rating, String content) {
-        if(!this.user.equals(user)) {
+        if (!this.user.equals(user)) {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
         }
-        if(rating < 1 || rating > 5) {
-            throw new CustomException(ExceptionType.INVALID_REQUEST, "별점은 1~5점 사이여야 합니다.");
-        }
+        validateRating(rating);
+        validateContent(content);
         this.rating = rating;
-        this.content = content;
+        this.content = content.trim();
     }
 
     public void deleteReview(User user) {
-        if(!this.user.equals(user)) {
+        if (!this.user.equals(user)) {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
         }
-        this.ownerComment = null;
+        if (this.ownerComment != null) {
+            removeOwnerComment();
+        }
         this.softDelete();
     }
 
     public void addOwnerComment(User owner, String commentContent) {
-        if(!owner.isOwner()) {
-            throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
-        }
-        if(this.ownerComment != null) {
-            throw new CustomException(ExceptionType.DUPLICATE_RESOURCE,"이미 댓글이 작성되었습니다.");
-        }
+        validateOwnerCommentConditions(owner);
         this.ownerComment = OwnerComment.builder()
                 .review(this)
                 .owner(owner)
-                .content(commentContent)
+                .content(commentContent.trim())
                 .build();
+    }
+
+    private void validateOwnerCommentConditions(User owner) {
+        if (!owner.isOwner()) {
+            throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
+        }
+        if (this.ownerComment != null) {
+            throw new CustomException(ExceptionType.DUPLICATE_RESOURCE, "이미 댓글이 작성되었습니다.");
+        }
+    }
+
+    public void removeOwnerComment() {
+        this.ownerComment = null;
     }
 
     public Optional<OwnerComment> getOwnerComment() {
@@ -102,4 +123,3 @@ public class Review extends BaseDeletableEntity {
         return this.order.isCompleted() && this.order.getReview() == null;
     }
 }
-

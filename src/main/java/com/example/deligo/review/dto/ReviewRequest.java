@@ -1,7 +1,5 @@
 package com.example.deligo.review.dto;
 
-import com.example.deligo.common.exception.CustomException;
-import com.example.deligo.common.exception.ExceptionType;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -20,22 +18,4 @@ public class ReviewRequest {
     @NotBlank(message = "리뷰 내용은 비어있을 수 없습니다.")
     @Size(min = 1, max = 1000, message = "리뷰는 최소 1자 이상, 최대 1000자 이하로 입력해야 합니다.")
     private String content;
-
-    public static ReviewRequest from(Long orderId, int rating, String content) {
-        content = (content != null) ? content.trim() : null;
-        validate(orderId, rating, content);
-        return new ReviewRequest(orderId, rating, content);
-    }
-
-    private static void validate(Long orderId, int rating, String content) {
-        if (orderId == null) {
-            throw new CustomException(ExceptionType.INVALID_REQUEST, "주문 ID는 필수입니다.");
-        }
-        if (rating < 1 || rating > 5) {
-            throw new CustomException(ExceptionType.INVALID_REQUEST, "별점은 1~5점 사이여야 합니다.");
-        }
-        if (content == null || content.isBlank()) {
-            throw new CustomException(ExceptionType.INVALID_REQUEST, "리뷰 내용은 비어있을 수 없습니다.");
-        }
-    }
 }
