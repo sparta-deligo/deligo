@@ -14,6 +14,7 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @EntityGraph(attributePaths = {"user", "store", "orderItems", "orderItems.menu"})
+    @Query("SELECT o FROM Order o WHERE o.id = :id")
     Optional<Order> findWithId(Long id);
 
     @Query("select count(o) > 0 from Order o " +

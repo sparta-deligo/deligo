@@ -79,4 +79,8 @@ public class Order extends BaseTimeEntity {
     public void setOrderStatus(OrderStatus status) {
         this.status = status;
     }
+
+    public boolean isDelivered() {
+        return this.status == OrderStatus.DELIVERED;
+    }
 }
