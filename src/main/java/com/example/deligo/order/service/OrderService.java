@@ -10,7 +10,7 @@ import com.example.deligo.user.entity.User;
 import java.util.List;
 
 public interface OrderService {
-    SaveResponse saveOrder(User user, Store store, List<Menu> menus, SaveRequest saveRequest);
+    SaveResponse saveOrder(Long userId, SaveRequest saveRequest);
 
     FindResponse findUserOrder(Long userId, Long orderId);
 

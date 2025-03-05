@@ -28,35 +28,22 @@ public class OrderController {
 
     private final OrderService orderServ;
 
-    /* 타 서비스 로직(서비스로 바꿔야함) */
-    private final UserRepository userServ;
-    private final StoreRepository storeServ;
-    private final MenuRepository menuServ;
-
     @PostMapping
     public ResponseEntity<SaveResponse> saveOrder(HttpServletRequest request,
                                                   @Valid @RequestBody SaveRequest reqDto) {
-        Long userId = getLoginUserId(request);
-        User user = userServ.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-        Store store = storeServ.findById(reqDto.getStoreId()).orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
-        List<Menu> menus = reqDto.getMenuIds().stream()
-                .map(id -> menuServ.findById(id).orElseThrow(() -> new CustomException(MENU_NOT_FOUND)))
-                .toList();
 
-        return ResponseEntity.ok().body(orderServ.saveOrder(user, store, menus, reqDto));
+        return ResponseEntity.ok().body(orderServ.saveOrder(getLoginUserId(request), reqDto));
     }
 
     @GetMapping("/user/{orderId}")
     public ResponseEntity<FindResponse> checkMyOrder(@PathVariable Long orderId, HttpServletRequest request) {
-        Long loginUserId = getLoginUserId(request);
-        return ResponseEntity.ok().body(orderServ.findUserOrder(orderId, loginUserId));
+        return ResponseEntity.ok().body(orderServ.findUserOrder(orderId, getLoginUserId(request)));
     }
 
     @GetMapping("/owner/{orderId}")
     public ResponseEntity<FindStoreOrderResponse> checkStoreOrder(@PathVariable Long orderId, HttpServletRequest request) {
-        Long loginUserId = getLoginUserId(request);
 
-        return ResponseEntity.ok().body(orderServ.findStoreOrder(loginUserId, orderId));
+        return ResponseEntity.ok().body(orderServ.findStoreOrder(getLoginUserId(request), orderId));
     }
 
     @PatchMapping("/user/{orderId}")

@@ -1,8 +1,6 @@
 package com.example.deligo.order.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -28,9 +26,11 @@ public class SaveRequest {
     private String deliverAddress;
 
     @NotNull
+    @Size(max = 50, message = "50자까지만 입력 가능합니다.")
     private String storeComment;
 
     @NotNull
+    @Size(max = 50, message = "50자까지만 입력 가능합니다.")
     private String riderComment;
 
     public SaveRequest(String deliverAddress, List<Long> menuIds, int quantity, String riderComment, String storeComment, Long storeId) {

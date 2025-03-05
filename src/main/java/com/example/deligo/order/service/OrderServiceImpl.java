@@ -15,7 +15,7 @@ import com.example.deligo.store.repository.StoreRepository;
 import com.example.deligo.user.entity.User;
 import com.example.deligo.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import static com.example.deligo.common.exception.ExceptionType.*;
 import static com.example.deligo.order.entity.OrderStatus.CANCELED;
 import static com.example.deligo.user.entity.UserRole.OWNER;
 
-@Repository
+@Service
 @Transactional
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
@@ -39,15 +39,19 @@ public class OrderServiceImpl implements OrderService {
     private final MenuRepository menuServ;
 
     @Override
-    public SaveResponse saveOrder(User user, Store store, List<Menu> menus, SaveRequest saveRequest) {
-        List<Long> menuIds = saveRequest.getMenuIds();
+    public SaveResponse saveOrder(Long userId, SaveRequest reqDto) {
+        User user = userServ.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        Store store = storeServ.findById(reqDto.getStoreId()).orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
+        List<Menu> menus = reqDto.getMenuIds().stream()
+                .map(id -> menuServ.findById(id).orElseThrow(() -> new CustomException(MENU_NOT_FOUND)))
+                .toList();
 
-        Order order = new Order(user, store, new ArrayList<>(), saveRequest);
+        Order order = new Order(user, store, new ArrayList<>(), reqDto);
         orderRepo.save(order);
 
         List<OrderItem> orderItems = menus.stream()
                 .map(menu -> {
-                    OrderItem orderItem = new OrderItem(menu, order, menu.getPrice(), saveRequest.getQuantity());
+                    OrderItem orderItem = new OrderItem(menu, order, menu.getPrice(), reqDto.getQuantity());
                     order.addOrderItems(orderItem);
                     return orderItem;
                 })
@@ -59,8 +63,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public FindResponse findUserOrder(Long userId, Long orderId) {
-        Order order = findOrder(orderId);
-        userOrderCheck(userId, order);
+        Order order = userOrderCheck(userId, orderId);
 
         return new FindResponse(order);
     }
@@ -79,8 +82,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderCancelResponse cancelOrder(Long loginUserId, Long orderId) {
-        Order order = findOrder(orderId);
-        userOrderCheck(loginUserId, order);
+        Order order = userOrderCheck(loginUserId, orderId);
 
         OrderStatus status = order.getStatus();
         switch (status) {
@@ -107,14 +109,14 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private static CustomException getNoPermissionException() {
+    private CustomException getNoPermissionException() {
         return new CustomException(NO_PERMISSION_ACTION);
     }
 
     /**
      * 취소된 주문인지 확인
      */
-    private static void isCanceled(Order order) {
+    private void isCanceled(Order order) {
         if (order.getStatus().equals(CANCELED)) {
             throw new CustomException(ALREADY_CANCELED);
         }
@@ -124,26 +126,30 @@ public class OrderServiceImpl implements OrderService {
      * 내 주문 확인
      */
     private Order findOrder(Long orderId) {
-        return orderRepo.findById(orderId).orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
+        return orderRepo.findWithId(orderId).orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
     }
 
     /**
      * 내 주문이 맞는지 확인
      */
-    private static void userOrderCheck(Long loginUserId, Order order) {
+    private Order userOrderCheck(Long loginUserId, Long orderId) {
+        Order order = orderRepo.findWithId(orderId).orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
         if (!order.getUser().getId().equals(loginUserId)) {
             throw getNoPermissionException();
         }
+        return order;
     }
 
     /**
      * 가게 주인이 맞는지 확인
      */
     private User isOwner(Long loginUserId) {
-        if (!userServ.findById(loginUserId).get().getRole().equals(OWNER)) {
+        User user = userServ.findById(loginUserId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        if (!user.getRole().equals(OWNER)) {
             throw getNoPermissionException();
         } else {
-            return userServ.findById(loginUserId).get();
+            return user;
         }
     }
 }
