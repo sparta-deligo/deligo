@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -37,7 +39,7 @@ public class UserService {
     }
 
     @Transactional
-    public String login(LoginRequest request) {
+    public Map<String, String> login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new CustomException(ExceptionType.INVALID_CREDENTIALS));
 
@@ -47,6 +49,7 @@ public class UserService {
 
         return jwtUtil.generateToken(user.getId());
     }
+
 
     @Transactional
     public void deleteUser(Long userId, String password) {
@@ -58,7 +61,15 @@ public class UserService {
         }
         userRepository.delete(user);
     }
+
+    @Transactional(readOnly = true)
+    public UserResponse getUserById(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+        return new UserResponse(user);
+    }
 }
+
 
 
 

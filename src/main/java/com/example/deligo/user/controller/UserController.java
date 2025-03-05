@@ -28,9 +28,9 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
-        String token = userService.login(request);
-        return ResponseEntity.ok(Map.of("token", token));
+    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginRequest request) {
+        Map<String, String> tokenInfo = userService.login(request);
+        return ResponseEntity.ok(tokenInfo);
     }
 
 
@@ -43,6 +43,13 @@ public class UserController {
         userService.deleteUser(userId, password);
         return ResponseEntity.ok(new ApiResponse("회원탈퇴 완료"));
     }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserResponse> getUser(@PathVariable Long userId) {
+        UserResponse response = userService.getUserById(userId);
+        return ResponseEntity.ok(response);
+    }
 }
+
 
 
