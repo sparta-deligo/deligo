@@ -9,7 +9,6 @@ import com.example.deligo.review.dto.response.ReviewResponse;
 import com.example.deligo.review.entity.Review;
 import com.example.deligo.review.repository.OwnerCommentRepository;
 import com.example.deligo.review.repository.ReviewRepository;
-import com.example.deligo.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -48,10 +47,10 @@ public class ReviewService {
     }
 
     @Transactional
-    public ReviewResponse createReview(User user, ReviewRequest request) {
+    public ReviewResponse createReview(Long userId, ReviewRequest request) {
         Order order = getOrderById(request.getOrderId());
 
-        if (!order.getUser().equals(user)) {
+        if (!order.getUser().getId().equals(userId)) {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
         }
 
@@ -64,7 +63,7 @@ public class ReviewService {
         });
 
         Review review = Review.builder()
-                .user(user)
+                .user(order.getUser())
                 .order(order)
                 .rating(request.getRating())
                 .content(request.getContent())
@@ -75,25 +74,25 @@ public class ReviewService {
     }
 
     @Transactional
-    public ReviewResponse updateReview(User user, Long reviewId, ReviewRequest request) {
+    public ReviewResponse updateReview(Long userId, Long reviewId, ReviewRequest request) {
         Review review = getReviewById(reviewId);
 
-        if (!review.getUser().equals(user)) {
+        if (!review.getUser().getId().equals(userId)) {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
         }
 
-        review.updateReview(user, request.getRating(), request.getContent());
+        review.updateReview(review.getUser(), request.getRating(), request.getContent());
         return new ReviewResponse(review, null);
     }
 
     @Transactional
-    public void deleteReview(User user, Long reviewId) {
+    public void deleteReview(Long userId, Long reviewId) {
         Review review = getReviewById(reviewId);
 
-        if (!review.getUser().equals(user)) {
+        if (!review.getUser().getId().equals(userId)) {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
         }
-        review.deleteReview(user);
+        review.deleteReview(review.getUser());
     }
 
     private Order getOrderById(Long orderId) {
