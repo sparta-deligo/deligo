@@ -36,12 +36,10 @@ public class User extends BaseDeletableEntity {
         this.role = role;
     }
 
-<<<<<<< HEAD
     public User(long l, String mail, String password, String tester, String roleUser) {
         super();
     }
-=======
->>>>>>> dev
+
     public boolean isOwner() {
         return this.role == UserRole.OWNER;
     }
