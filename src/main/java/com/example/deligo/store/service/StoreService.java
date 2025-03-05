@@ -1,21 +1,27 @@
 package com.example.deligo.store.service;
 
+import com.example.deligo.common.dto.PaginationResponse;
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.common.exception.ExceptionType;
-import com.example.deligo.store.dto.request.StoreSaveRequestDto;
-import com.example.deligo.store.dto.request.StoreUpdateRequestDto;
-import com.example.deligo.store.dto.response.StoreResponseDto;
-import com.example.deligo.store.dto.response.StoreSaveResponseDto;
+import com.example.deligo.store.dto.Request.StoreSaveRequestDto;
+import com.example.deligo.store.dto.Request.StoreUpdateRequestDto;
+import com.example.deligo.store.dto.Response.StoreResponseDto;
+import com.example.deligo.store.dto.Response.StoreSaveResponseDto;
 import com.example.deligo.store.entity.Store;
 import com.example.deligo.store.repository.StoreRepository;
 import com.example.deligo.user.entity.User;
 import com.example.deligo.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class StoreService {
@@ -27,7 +33,7 @@ public class StoreService {
     @Transactional
     public StoreSaveResponseDto createStore(Long userId, StoreSaveRequestDto dto) {
         User user = userRepository.findById(userId).orElseThrow(
-                ()-> new IllegalArgumentException("존재하지 않는 사용자입니다")
+                ()-> new CustomException(ExceptionType.USER_NOT_FOUND)
         );
         Store store = Store.builder()
                 .user(user) // userId로 사용자 객체 가져옴
@@ -42,7 +48,7 @@ public class StoreService {
         Store savedStore = storeRepository.save(store);
         return new StoreSaveResponseDto(
                 savedStore.getId(),
-                savedStore.getOwner().getId(),
+                savedStore.getOwner().getId(), //n+1문제 fetch조인 이나 Entitygraph 사용해서 문제해결
                 savedStore.getName(),
                 savedStore.getCategory(),
                 savedStore.getOpenTime(),
@@ -54,27 +60,29 @@ public class StoreService {
     }
 
     @Transactional(readOnly = true)
-    public List<StoreResponseDto> getAllStore() {
-        List<Store> stores = storeRepository.findAll();
-        List<StoreResponseDto> dtos = new ArrayList<>();
-        for (Store store : stores) {
-            dtos.add(new StoreResponseDto( store.getId(),
-                    store.getOwner().getId(),
-                    store.getName(),
-                    store.getCategory(),
-                    store.getOpenTime(),
-                    store.getCloseTime(),
-                    store.getMinOrderAmount(),
-                    store.getStatus(),
-                    store.getAverageRating()));
-        }
-        return dtos;
+    public PaginationResponse<StoreResponseDto> getAllStore(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        Page<Store> storePage = storeRepository.findAllActiveStores(pageable);
+
+        Page<StoreResponseDto> dtoPage = storePage.map(store -> new StoreResponseDto(
+                store.getId(),
+                store.getOwner().getId(),
+                store.getName(),
+                store.getCategory(),
+                store.getOpenTime(),
+                store.getCloseTime(),
+                store.getMinOrderAmount(),
+                store.getStatus(),
+                store.getAverageRating()
+        ));
+
+        return new PaginationResponse<>(dtoPage);
     }
 
     @Transactional(readOnly = true)
     public StoreResponseDto getByStoreID(Long id) {
-        Store store = storeRepository.findById(id).orElseThrow(
-                ()->new IllegalArgumentException("가게 id를 찾을 수 없습니다")
+        Store store = storeRepository.findActiveStoreById(id).orElseThrow(
+                ()->new CustomException(ExceptionType.STORE_NOT_FOUND)
         );
         return new StoreResponseDto(
                 store.getId(),
@@ -93,7 +101,7 @@ public class StoreService {
     @Transactional
     public StoreResponseDto updateStore(Long id, StoreUpdateRequestDto dto, Long userId) {
         Store store = storeRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("가게 id를 찾을 수 없습니다")
+                () -> new CustomException(ExceptionType.STORE_NOT_FOUND)
         );
 
         // 로그인한 사용자와 해당 가게의 소유자가 같은지 확인
@@ -118,7 +126,7 @@ public class StoreService {
     @Transactional
     public void deleteByStoreId(Long id, Long userId) {
         Store store = storeRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("가게 id를 찾을 수 없습니다")
+                () -> new CustomException(ExceptionType.STORE_NOT_FOUND)
         );
 
         // 로그인한 사용자와 해당 가게의 소유자가 같은지 확인
@@ -126,7 +134,7 @@ public class StoreService {
             throw new CustomException(ExceptionType.UNAUTHORIZED); // 접근 권한이 없는 경우
         }
 
-        storeRepository.deleteById(id);
+        store.softDelete(); //하드 삭제 대신 softDelete()호출
     }
 
     @Transactional

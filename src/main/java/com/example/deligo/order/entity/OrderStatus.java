@@ -1,7 +1,6 @@
 package com.example.deligo.order.entity;
 
 public enum OrderStatus {
-    COMPLETED, //추가
     ORDER_RECEIVED, //주문 들어간 상태. 승인은 아직 안됨
     ACCEPTED, //주문 승인
     COOKING, //조리중

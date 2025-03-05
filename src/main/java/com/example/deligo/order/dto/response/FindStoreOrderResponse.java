@@ -1,7 +1,6 @@
 package com.example.deligo.order.dto.response;
 
 import com.example.deligo.order.entity.Order;
-import com.example.deligo.order.entity.OrderItem;
 import com.example.deligo.order.entity.OrderStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class FindResponse {
+public class FindStoreOrderResponse {
     private Long userId;
     private Long storeId;
     private List<Long> menuId;
@@ -22,7 +21,7 @@ public class FindResponse {
     private LocalDateTime updatedAt;
     private OrderStatus orderStatus;
 
-    public FindResponse(Order order) {
+    public FindStoreOrderResponse(Order order) {
         this.menuId = order.getOrderItems().stream()
                 .map(orderItem -> orderItem.getMenu().getId())
                 .toList();

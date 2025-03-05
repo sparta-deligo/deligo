@@ -1,8 +1,6 @@
 package com.example.deligo.store.entity;
 import com.example.deligo.common.entity.BaseDeletableEntity;
-import com.example.deligo.common.exception.CustomException;
-import com.example.deligo.common.exception.ExceptionType;
-import com.example.deligo.store.dto.request.StoreUpdateRequestDto;
+import com.example.deligo.store.dto.Request.StoreUpdateRequestDto;
 import com.example.deligo.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

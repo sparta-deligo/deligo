@@ -14,6 +14,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.deligo.order.entity.OrderStatus.CANCELED;
+import static com.example.deligo.order.entity.OrderStatus.ORDER_RECEIVED;
+
 @Entity
 @Table(name = "orders")
 @Getter
@@ -32,16 +35,6 @@ public class Order extends BaseTimeEntity {
     @JoinColumn(name = "store_id")
     private Store store;
 
-    @OneToOne(mappedBy = "order",cascade = CascadeType.ALL, orphanRemoval = true)
-    private Review review; // 추가
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "menu_id")
-//    private Menu menu = new ArrayList<>();
-
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems = new ArrayList<>();
 
@@ -52,11 +45,7 @@ public class Order extends BaseTimeEntity {
     private String riderComment;
 
     @Enumerated(EnumType.STRING)
-
     private OrderStatus status = ORDER_RECEIVED;
-
-    @Column(nullable = false)
-    private OrderStatus status;
 
     private LocalDateTime canceledAt = null;
 
@@ -82,14 +71,12 @@ public class Order extends BaseTimeEntity {
     public void addOrderItems(OrderItem orderItem) {
         this.orderItems.add(orderItem);
     }
+  
+    public void cancelOrder() {
+        this.status = CANCELED;
+    }
 
-    public boolean hasReview() { // 추가
-        return this.review != null;
-    }
-    public boolean isCompleted() { // 추가
-        return this.status == OrderStatus.COMPLETED;
-    }
-    public void setReview(Review review) {
-        this.review = review;
+    public void setOrderStatus(OrderStatus status) {
+        this.status = status;
     }
 }

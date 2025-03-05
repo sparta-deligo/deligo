@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class FindResponse {
+public class SetStatusResponse {
     private Long userId;
     private Long storeId;
     private List<Long> menuId;
@@ -22,8 +22,9 @@ public class FindResponse {
     private LocalDateTime updatedAt;
     private OrderStatus orderStatus;
 
-    public FindResponse(Order order) {
-        this.menuId = order.getOrderItems().stream()
+    public SetStatusResponse(Order order) {
+        List<OrderItem> orderItems = order.getOrderItems();
+        this.menuId = orderItems.stream()
                 .map(orderItem -> orderItem.getMenu().getId())
                 .toList();
         this.createdAt = order.getCreatedAt();
