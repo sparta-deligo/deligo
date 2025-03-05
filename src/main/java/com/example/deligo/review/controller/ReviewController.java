@@ -3,6 +3,7 @@ package com.example.deligo.review.controller;
 import com.example.deligo.common.dto.PaginationResponse;
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.common.exception.ExceptionType;
+import com.example.deligo.common.jwt.JwtUtil;
 import com.example.deligo.review.dto.request.ReviewRequest;
 import com.example.deligo.review.dto.response.ReviewResponse;
 import com.example.deligo.review.service.ReviewService;

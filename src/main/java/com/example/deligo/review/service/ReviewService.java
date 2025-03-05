@@ -55,7 +55,7 @@ public class ReviewService {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
         }
 
-        if (!order.isCompleted()) {
+        if (!order.isDelivered()) {
             throw new CustomException(ExceptionType.REVIEW_CONDITION_NOT_MET);
         }
 

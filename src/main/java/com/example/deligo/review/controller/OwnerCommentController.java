@@ -2,6 +2,7 @@ package com.example.deligo.review.controller;
 
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.common.exception.ExceptionType;
+import com.example.deligo.common.jwt.JwtUtil;
 import com.example.deligo.review.dto.request.OwnerCommentRequest;
 import com.example.deligo.review.service.OwnerCommentService;
 import com.example.deligo.user.entity.User;
