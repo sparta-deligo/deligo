@@ -7,6 +7,7 @@ import com.example.deligo.store.dto.Response.StoreResponseDto;
 import com.example.deligo.store.dto.Response.StoreSaveResponseDto;
 import com.example.deligo.store.service.StoreService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class StoreController {
     //가게 등록
     @PostMapping
     public ResponseEntity<StoreSaveResponseDto> createStore(
-            @RequestBody StoreSaveRequestDto dto,
+           @Valid @RequestBody StoreSaveRequestDto dto,
             HttpServletRequest request // HttpServletRequest를 통해 userId를 받아옴
     ) {
         Long userId = (Long) request.getAttribute("userId"); // 필터에서 설정한 userId 가져오기
