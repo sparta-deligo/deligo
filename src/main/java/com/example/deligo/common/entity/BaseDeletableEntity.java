@@ -1,9 +1,5 @@
 package com.example.deligo.common.entity;
-<<<<<<< HEAD
-
 import jakarta.persistence.Column;
-=======
->>>>>>> feature/store
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 

@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface OwnerCommentRepository extends JpaRepository<OwnerComment, Long> {
     Optional<OwnerComment> findByReviewId(Long reviewId);
-    @Query("SELECT oc FROM OwnerComment oc WHERE oc.review.order.store.id = :storeId")
+    @Query("SELECT oc FROM OwnerComment oc JOIN FETCH oc.review r WHERE r.order.store.id = :storeId")
     List<OwnerComment> findByStoreId(@Param("storeId") Long storeId);;
     boolean existsByReviewId(Long reviewId);
 }

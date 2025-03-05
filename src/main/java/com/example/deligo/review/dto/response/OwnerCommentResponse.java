@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 @Getter
 public class OwnerCommentResponse {
-
     private Long id;
     private Long reviewId;
     private Long ownerId;

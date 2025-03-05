@@ -16,7 +16,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -72,7 +71,6 @@ public class ReviewService {
                 .build();
 
         reviewRepository.save(review);
-
         return new ReviewResponse(review, null);
     }
 
@@ -85,7 +83,6 @@ public class ReviewService {
         }
 
         review.updateReview(user, request.getRating(), request.getContent());
-
         return new ReviewResponse(review, null);
     }
 
@@ -96,7 +93,6 @@ public class ReviewService {
         if (!review.getUser().equals(user)) {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
         }
-
         review.deleteReview(user);
     }
 

@@ -31,7 +31,7 @@ public class ReviewController {
             throw new CustomException(ExceptionType.UNAUTHORIZED);
         }
         String jwt = token.substring(7);
-        return userService.findById(jwtUtil.getUserIdFromToken(jwt)); // UserService 에서 구현되어야함
+        return userService.findById(jwtUtil.getUserIdFromToken(jwt));
     }
 
     @PostMapping
@@ -64,7 +64,7 @@ public class ReviewController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/store/{storeId}")
+    @GetMapping("/stores/{storeId}/reviews")
     public ResponseEntity<PaginationResponse<ReviewResponse>> getReviewsByStore(
             @PathVariable Long storeId,
             @RequestParam(defaultValue = "0") int page,

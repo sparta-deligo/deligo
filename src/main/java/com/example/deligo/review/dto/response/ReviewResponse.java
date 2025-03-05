@@ -1,6 +1,5 @@
 package com.example.deligo.review.dto.response;
 
-import com.example.deligo.review.entity.OwnerComment;
 import com.example.deligo.review.entity.Review;
 import lombok.Getter;
 
@@ -26,12 +25,5 @@ public class ReviewResponse {
         this.createdAt = review.getCreatedAt();
         this.updatedAt = review.getUpdatedAt();
         this.ownerComment = ownerComment;
-    }
-
-    public static ReviewResponse from(Review review) {
-        String ownerComment = review.getOwnerComment()
-                .map(OwnerComment::getContent)
-                .orElse(null);
-        return new ReviewResponse(review, ownerComment);
     }
 }

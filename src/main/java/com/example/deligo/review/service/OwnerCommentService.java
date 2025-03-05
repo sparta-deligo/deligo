@@ -19,15 +19,16 @@ public class OwnerCommentService {
     private final ReviewRepository reviewRepository;
 
     @Transactional
-    public OwnerComment createOwnerComment(User owner, Long reviewId, String content) {
-        Review review = getReviewById(reviewId);
+    public void createOwnerComment(User owner, Long reviewId, String content) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new CustomException(ExceptionType.REVIEW_NOT_FOUND));
 
-        if (!owner.isStoreOwner()) { // User 엔티티에 메서드 구현 필요
+        if (!owner.isStoreOwner()) {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
         }
 
         if (ownerCommentRepository.existsByReviewId(reviewId)) {
-            throw new CustomException(ExceptionType.DUPLICATE_OWNER_COMMENT);
+            throw new CustomException(ExceptionType.REVIEW_ALREADY_HAS_COMMENT);
         }
 
         OwnerComment ownerComment = OwnerComment.builder()
@@ -36,35 +37,25 @@ public class OwnerCommentService {
                 .content(content)
                 .build();
 
-        return ownerCommentRepository.save(ownerComment);
+        ownerCommentRepository.save(ownerComment);
     }
 
     @Transactional
     public void updateOwnerComment(User owner, Long commentId, String newContent) {
-        OwnerComment ownerComment = getOwnerCommentById(commentId);
+        OwnerComment ownerComment = ownerCommentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(ExceptionType.OWNER_COMMENT_NOT_FOUND));
 
         validateOwnerPermission(ownerComment, owner);
-
         ownerComment.updateContent(newContent);
     }
 
     @Transactional
     public void deleteOwnerComment(User owner, Long commentId) {
-        OwnerComment ownerComment = getOwnerCommentById(commentId);
+        OwnerComment ownerComment = ownerCommentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(ExceptionType.OWNER_COMMENT_NOT_FOUND));
 
         validateOwnerPermission(ownerComment, owner);
-
         ownerCommentRepository.delete(ownerComment);
-    }
-
-    private Review getReviewById(Long reviewId) {
-        return reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new CustomException(ExceptionType.REVIEW_NOT_FOUND));
-    }
-
-    private OwnerComment getOwnerCommentById(Long commentId) {
-        return ownerCommentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(ExceptionType.OWNER_COMMENT_NOT_FOUND));
     }
 
     private void validateOwnerPermission(OwnerComment ownerComment, User owner) {
