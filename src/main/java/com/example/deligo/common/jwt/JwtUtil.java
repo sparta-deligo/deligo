@@ -56,10 +56,8 @@ public class JwtUtil {
                     .getBody();
             return Long.parseLong(claims.getSubject());
         } catch (ExpiredJwtException e) {
-            log.error("만료된 토큰: {}", e.getClaims().getExpiration());
             throw new CustomException(ExceptionType.TOKEN_EXPIRED, "토큰이 만료되었습니다.");
         } catch (JwtException e) {
-            log.error("JWT 오류: {}", token);
             throw new CustomException(ExceptionType.TOKEN_INVALID, "JWT가 유효하지 않습니다.");
         }
     }
@@ -68,12 +66,8 @@ public class JwtUtil {
         try {
             Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
             return true;
-        } catch (ExpiredJwtException e) {
-            log.error("토큰 만료: {}", token);
-            return false; // 만료된 토큰은 false 반환
         } catch (JwtException e) {
-            log.error("JWT 검증 실패: {}", token);
-            throw new CustomException(ExceptionType.TOKEN_INVALID, "토큰이 유효하지 않습니다.");
+            return false;
         }
     }
 }

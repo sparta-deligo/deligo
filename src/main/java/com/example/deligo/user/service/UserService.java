@@ -30,7 +30,7 @@ public class UserService {
     }
 
     @Transactional
-    public void login(LoginRequest request) {
+    public void login(LoginRequest request) { // 로그인 했을 때 토큰값이 발급되어야함 (생성 해야함)
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new CustomException(ExceptionType.INVALID_CREDENTIALS));
 
