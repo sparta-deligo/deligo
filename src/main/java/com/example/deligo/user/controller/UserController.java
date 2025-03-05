@@ -3,6 +3,7 @@ package com.example.deligo.user.controller;
 import com.example.deligo.common.dto.ApiResponse;
 import com.example.deligo.user.dto.request.LoginRequest;
 import com.example.deligo.user.dto.request.SignupRequest;
+import com.example.deligo.user.dto.request.DeleteUserRequest;
 import com.example.deligo.user.dto.response.UserResponse;
 import com.example.deligo.user.service.UserService;
 import jakarta.validation.Valid;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,18 +28,21 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest request) {
-        userService.login(request);
-        return ResponseEntity.ok(new ApiResponse("로그인 성공!"));
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+        String token = userService.login(request);
+        return ResponseEntity.ok(Map.of("token", token));
     }
+
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponse> deleteUser(
             @PathVariable Long userId,
-            @RequestParam String password
+            @Valid @RequestBody DeleteUserRequest request
     ) {
+        String password = request.getPassword();
         userService.deleteUser(userId, password);
         return ResponseEntity.ok(new ApiResponse("회원탈퇴 완료"));
     }
 }
+
 

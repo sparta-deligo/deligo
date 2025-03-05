@@ -1,6 +1,5 @@
 package com.example.deligo.order.controller;
 
-import com.example.deligo.common.jwt.CheckAuth;
 import com.example.deligo.order.dto.request.OrderEditRequest;
 import com.example.deligo.order.dto.request.SaveRequest;
 import com.example.deligo.order.dto.response.*;
