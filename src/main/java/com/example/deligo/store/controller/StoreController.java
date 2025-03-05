@@ -1,16 +1,12 @@
 package com.example.deligo.store.controller;
 
-<<<<<<< HEAD
 import com.example.deligo.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
-
-=======
 import com.example.deligo.store.dto.request.StoreSaveRequestDto;
 import com.example.deligo.store.dto.request.StoreUpdateRequestDto;
 import com.example.deligo.store.dto.response.StoreResponseDto;
@@ -18,7 +14,6 @@ import com.example.deligo.store.dto.response.StoreSaveResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
->>>>>>> feature/store
 @RestController
 @RequestMapping("/stores")
 @RequiredArgsConstructor
@@ -26,13 +21,11 @@ public class StoreController {
 
     private final StoreService storeService;
 
-<<<<<<< HEAD
     @GetMapping
     public ResponseEntity<List<StoreResponse>> getStores() {
         return ResponseEntity.ok(storeService.getStoresWithRatings());
     }
 }
-=======
     //가게 등록
     @PostMapping
     public ResponseEntity<StoreSaveResponseDto> createStore(
@@ -75,4 +68,3 @@ public class StoreController {
         storeService.deleteByStoreId(id, userId);
     }
 }
->>>>>>> feature/store
