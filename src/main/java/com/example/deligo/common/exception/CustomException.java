@@ -26,4 +26,3 @@ public class CustomException extends RuntimeException {
         return super.getMessage();
     }
 }
-

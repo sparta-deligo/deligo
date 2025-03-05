@@ -1,5 +1,4 @@
 package com.example.deligo.common.entity;
-
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 
