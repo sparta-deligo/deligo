@@ -13,6 +13,8 @@ public enum ExceptionType {
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "로그인 정보가 올바르지 않습니다."),
 
     NO_PERMISSION_ACTION(HttpStatus.FORBIDDEN, "권한이 없는 작업입니다."),
+    ALREADY_ORDERED(HttpStatus.FORBIDDEN, "승인된 주문은 취소할 수 없습니다. 가게에 연락해주세요."),
+    ALREADY_CANCELED(HttpStatus.FORBIDDEN, "이미 취소된 주문입니다."),
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다."),
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 가게를 찾을 수 없습니다."),
