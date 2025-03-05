@@ -2,6 +2,7 @@ package com.example.deligo.user.service;
 
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.common.exception.ExceptionType;
+import com.example.deligo.common.jwt.JwtUtil;
 import com.example.deligo.config.PasswordEncoder;
 import com.example.deligo.user.dto.request.LoginRequest;
 import com.example.deligo.user.dto.request.SignupRequest;
@@ -17,26 +18,34 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Transactional
     public UserResponse signup(SignupRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new CustomException(ExceptionType.DUPLICATE_EMAIL);
         }
+
+        if (userRepository.findByNickname(request.getNickname()).isPresent()) {
+            throw new CustomException(ExceptionType.DUPLICATE_NICKNAME);
+        }
+
         String encodedPassword = passwordEncoder.encode(request.getPassword());
-        User user = new User(request.getEmail(), encodedPassword, request.getRole());
+        User user = new User(request.getEmail(), encodedPassword, request.getNickname(), request.getRole());
         userRepository.save(user);
         return new UserResponse(user);
     }
 
     @Transactional
-    public void login(LoginRequest request) { // 로그인 했을 때 토큰값이 발급되어야함 (생성 해야함)
+    public String login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new CustomException(ExceptionType.INVALID_CREDENTIALS));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new CustomException(ExceptionType.INVALID_CREDENTIALS);
         }
+
+        return jwtUtil.generateToken(user.getId());
     }
 
     @Transactional
@@ -50,3 +59,7 @@ public class UserService {
         userRepository.delete(user);
     }
 }
+
+
+
+
