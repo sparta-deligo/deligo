@@ -7,7 +7,6 @@ import com.example.deligo.order.dto.request.SaveRequest;
 import com.example.deligo.order.dto.response.SaveResponse;
 import com.example.deligo.order.repository.OrderItemRepository;
 import com.example.deligo.order.repository.OrderRepository;
-import com.example.deligo.order.service.OrderServiceImpl;
 import com.example.deligo.store.entity.Store;
 import com.example.deligo.store.entity.StoreCategory;
 import com.example.deligo.store.entity.StoreStatus;
