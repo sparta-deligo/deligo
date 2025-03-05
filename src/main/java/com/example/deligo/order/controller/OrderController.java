@@ -3,7 +3,7 @@ package com.example.deligo.order.controller;
 import com.example.deligo.order.dto.request.OrderEditRequest;
 import com.example.deligo.order.dto.request.SaveRequest;
 import com.example.deligo.order.dto.response.*;
-import com.example.deligo.order.service.OrderService;
+import com.example.deligo.order.service.orderServ.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

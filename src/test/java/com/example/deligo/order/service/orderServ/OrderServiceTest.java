@@ -4,10 +4,8 @@ import com.example.deligo.menu.entity.Menu;
 import com.example.deligo.menu.entity.MenuStatus;
 import com.example.deligo.menu.repository.MenuRepository;
 import com.example.deligo.order.dto.request.SaveRequest;
-import com.example.deligo.order.dto.response.SaveResponse;
 import com.example.deligo.order.repository.OrderItemRepository;
 import com.example.deligo.order.repository.OrderRepository;
-import com.example.deligo.order.service.OrderServiceImpl;
 import com.example.deligo.store.entity.Store;
 import com.example.deligo.store.entity.StoreCategory;
 import com.example.deligo.store.entity.StoreStatus;
@@ -26,7 +24,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
