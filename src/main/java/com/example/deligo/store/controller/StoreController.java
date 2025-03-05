@@ -1,5 +1,6 @@
 package com.example.deligo.store.controller;
 
+import com.example.deligo.common.dto.PaginationResponse;
 import com.example.deligo.store.dto.Request.StoreSaveRequestDto;
 import com.example.deligo.store.dto.Request.StoreUpdateRequestDto;
 import com.example.deligo.store.dto.Response.StoreResponseDto;
@@ -10,8 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
 @RestController
 @RequestMapping("/stores")
 @RequiredArgsConstructor
@@ -32,9 +33,12 @@ public class StoreController {
 
     //모든 가게 조회
     @GetMapping
-    public ResponseEntity<List<StoreResponseDto>> getAllStore() {
-        List<StoreResponseDto> store = storeService.getAllStore();
-        return ResponseEntity.ok(store);
+    public ResponseEntity<PaginationResponse<StoreResponseDto>> getAllStores(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ){
+        PaginationResponse<StoreResponseDto> stores = storeService.getAllStore(page, size);
+        return ResponseEntity.ok(stores);
     }
 
     //특정 가게 조회
