@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -21,6 +20,11 @@ public class StoreController {
 
     private final StoreService storeService;
 
+    @GetMapping
+    public ResponseEntity<List<StoreResponse>> getStores() {
+        return ResponseEntity.ok(storeService.getStoresWithRatings());
+    }
+}
     //가게 등록
     @PostMapping
     public ResponseEntity<StoreSaveResponseDto> createStore(

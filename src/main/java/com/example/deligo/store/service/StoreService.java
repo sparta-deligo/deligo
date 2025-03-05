@@ -136,5 +136,11 @@ public class StoreService {
 
         store.softDelete(); //하드 삭제 대신 softDelete()호출
     }
-}
 
+    @Transactional
+    public void updateStoreAverageRating(Long storeId, Double averageRating) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new CustomException(ExceptionType.STORE_NOT_FOUND));
+        store.updateAverageRating(averageRating);
+    }
+}

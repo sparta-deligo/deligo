@@ -71,7 +71,7 @@ public class Order extends BaseTimeEntity {
     public void addOrderItems(OrderItem orderItem) {
         this.orderItems.add(orderItem);
     }
-
+  
     public void cancelOrder() {
         this.status = CANCELED;
     }
