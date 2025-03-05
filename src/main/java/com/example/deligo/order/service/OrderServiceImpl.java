@@ -1,13 +1,10 @@
-package com.example.deligo.order.service.orderServ;
+package com.example.deligo.order.service;
 
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.menu.entity.Menu;
 import com.example.deligo.menu.repository.MenuRepository;
 import com.example.deligo.order.dto.request.SaveRequest;
-import com.example.deligo.order.dto.response.FindResponse;
-import com.example.deligo.order.dto.response.OrderCancelResponse;
-import com.example.deligo.order.dto.response.SaveResponse;
-import com.example.deligo.order.dto.response.SetStatusResponse;
+import com.example.deligo.order.dto.response.*;
 import com.example.deligo.order.entity.Order;
 import com.example.deligo.order.entity.OrderItem;
 import com.example.deligo.order.entity.OrderStatus;
@@ -26,6 +23,7 @@ import java.util.List;
 
 import static com.example.deligo.common.exception.ExceptionType.*;
 import static com.example.deligo.order.entity.OrderStatus.CANCELED;
+import static com.example.deligo.user.entity.UserRole.OWNER;
 
 @Repository
 @Transactional
@@ -60,18 +58,29 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public FindResponse findById(Long id) {
-        Order order = findOrder(id);
+    public FindResponse findUserOrder(Long userId, Long orderId) {
+        Order order = findOrder(orderId);
+        userOrderCheck(userId, order);
 
         return new FindResponse(order);
     }
 
     @Override
+    public FindStoreOrderResponse findStoreOrder(Long loginUserId, Long orderId) {
+        User owner = isOwner(loginUserId);
+        Order order = findOrder(orderId);
+
+        if (order.getStore().getOwner().getId().equals(owner.getId())) {
+            return new FindStoreOrderResponse(order);
+        } else {
+            throw getNoPermissionException();
+        }
+    }
+
+    @Override
     public OrderCancelResponse cancelOrder(Long loginUserId, Long orderId) {
         Order order = findOrder(orderId);
-        if (!loginUserId.equals(order.getUser().getId())) {
-            throw new CustomException(NO_PERMISSION_ACTION);
-        }
+        userOrderCheck(loginUserId, order);
 
         OrderStatus status = order.getStatus();
         switch (status) {
@@ -94,17 +103,47 @@ public class OrderServiceImpl implements OrderService {
             order.setOrderStatus(status);
             return new SetStatusResponse(order);
         } else {
-            throw new CustomException(NO_PERMISSION_ACTION);
+            throw getNoPermissionException();
         }
     }
 
+    private static CustomException getNoPermissionException() {
+        return new CustomException(NO_PERMISSION_ACTION);
+    }
+
+    /**
+     * 취소된 주문인지 확인
+     */
     private static void isCanceled(Order order) {
         if (order.getStatus().equals(CANCELED)) {
             throw new CustomException(ALREADY_CANCELED);
         }
     }
 
-    private Order findOrder(Long id) {
-        return orderRepo.findById(id).orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
+    /**
+     * 내 주문 확인
+     */
+    private Order findOrder(Long orderId) {
+        return orderRepo.findById(orderId).orElseThrow(() -> new CustomException(ORDER_NOT_FOUND));
+    }
+
+    /**
+     * 내 주문이 맞는지 확인
+     */
+    private static void userOrderCheck(Long loginUserId, Order order) {
+        if (!order.getUser().getId().equals(loginUserId)) {
+            throw getNoPermissionException();
+        }
+    }
+
+    /**
+     * 가게 주인이 맞는지 확인
+     */
+    private User isOwner(Long loginUserId) {
+        if (!userServ.findById(loginUserId).get().getRole().equals(OWNER)) {
+            throw getNoPermissionException();
+        } else {
+            return userServ.findById(loginUserId).get();
+        }
     }
 }

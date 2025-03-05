@@ -3,14 +3,10 @@ package com.example.deligo.order.controller;
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.menu.entity.Menu;
 import com.example.deligo.menu.repository.MenuRepository;
+import com.example.deligo.order.dto.request.EditRequest;
 import com.example.deligo.order.dto.request.SaveRequest;
-import com.example.deligo.order.dto.response.FindResponse;
-import com.example.deligo.order.dto.response.OrderCancelResponse;
-import com.example.deligo.order.dto.response.SaveResponse;
-import com.example.deligo.order.dto.response.SetStatusResponse;
-import com.example.deligo.order.entity.Order;
-import com.example.deligo.order.entity.OrderStatus;
-import com.example.deligo.order.service.orderServ.OrderService;
+import com.example.deligo.order.dto.response.*;
+import com.example.deligo.order.service.OrderService;
 import com.example.deligo.store.entity.Store;
 import com.example.deligo.store.repository.StoreRepository;
 import com.example.deligo.user.entity.User;
@@ -39,31 +35,39 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<SaveResponse> saveOrder(HttpServletRequest request,
-                                                  @Valid @RequestBody SaveRequest saveRequest) {
+                                                  @Valid @RequestBody SaveRequest reqDto) {
         Long userId = getLoginUserId(request);
         User user = userServ.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-        Store store = storeServ.findById(saveRequest.getStoreId()).orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
-        List<Menu> menus = saveRequest.getMenuIds().stream()
+        Store store = storeServ.findById(reqDto.getStoreId()).orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
+        List<Menu> menus = reqDto.getMenuIds().stream()
                 .map(id -> menuServ.findById(id).orElseThrow(() -> new CustomException(MENU_NOT_FOUND)))
                 .toList();
 
-        return ResponseEntity.ok().body(orderServ.saveOrder(user, store, menus, saveRequest));
+        return ResponseEntity.ok().body(orderServ.saveOrder(user, store, menus, reqDto));
     }
 
-    @GetMapping("/{orderId}")
-    public ResponseEntity<FindResponse> checkOrder(@PathVariable Long orderId) {
-        return ResponseEntity.ok().body(orderServ.findById(orderId));
+    @GetMapping("/user/{orderId}")
+    public ResponseEntity<FindResponse> checkMyOrder(@PathVariable Long orderId, HttpServletRequest request) {
+        Long loginUserId = getLoginUserId(request);
+        return ResponseEntity.ok().body(orderServ.findUserOrder(orderId, loginUserId));
     }
 
-    @PatchMapping("/orderId")
+    @GetMapping("/owner/{orderId}")
+    public ResponseEntity<FindStoreOrderResponse> checkStoreOrder(@PathVariable Long orderId, HttpServletRequest request) {
+        Long loginUserId = getLoginUserId(request);
+
+        return ResponseEntity.ok().body(orderServ.findStoreOrder(loginUserId, orderId));
+    }
+
+    @PatchMapping("/user/{orderId}")
     public ResponseEntity<OrderCancelResponse> cancelOrder(@PathVariable Long orderId, HttpServletRequest request) {
         Long loginUserId = getLoginUserId(request);
         return ResponseEntity.ok().body(orderServ.cancelOrder(loginUserId, orderId));
     }
 
-    @PatchMapping("/{orderId}/{orderStatus}")
-    public ResponseEntity<SetStatusResponse> editOrderStatus(@PathVariable Long orderId, @PathVariable OrderStatus orderStatus, HttpServletRequest request) {
-        return ResponseEntity.ok().body(orderServ.setOrderStatus(getLoginUserId(request), orderId, orderStatus));
+    @PatchMapping("/owner/{orderId}/")
+    public ResponseEntity<SetStatusResponse> editOrderStatus(@PathVariable Long orderId, @RequestBody EditRequest reqDto, HttpServletRequest request) {
+        return ResponseEntity.ok().body(orderServ.setOrderStatus(getLoginUserId(request), orderId, reqDto.getOrderStatus()));
    }
 
     private static Long getLoginUserId(HttpServletRequest request) {
