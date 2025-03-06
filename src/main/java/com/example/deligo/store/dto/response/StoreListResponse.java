@@ -1,16 +1,15 @@
-package com.example.deligo.store.dto.Response;
+package com.example.deligo.store.dto.response;
 
 import com.example.deligo.menu.dto.response.MenuResponse;
 import com.example.deligo.store.entity.StoreCategory;
 import com.example.deligo.store.entity.StoreStatus;
 import lombok.Getter;
-import org.hibernate.engine.spi.Status;
 
 import java.time.LocalTime;
 import java.util.List;
 
 @Getter
-public class StoreResponseDto {
+public class StoreListResponse {
     private Long id;
     private Long ownerId;
     private String name;
@@ -20,11 +19,10 @@ public class StoreResponseDto {
     private int minOrderAmount;
     private StoreStatus status;
     private double averageRating;
-    private List<MenuResponse> menuList;
 
-    public StoreResponseDto(Long id, Long ownerId, String name, StoreCategory category,
-                            LocalTime openTime, LocalTime closeTime, int minOrderAmount,
-                            StoreStatus status, double averageRating, List<MenuResponse> menuList) {
+    public StoreListResponse(Long id, Long ownerId, String name, StoreCategory category,
+                         LocalTime openTime, LocalTime closeTime, int minOrderAmount,
+                         StoreStatus status, double averageRating) {
         this.id = id;
         this.ownerId = ownerId;
         this.name = name;
@@ -34,6 +32,5 @@ public class StoreResponseDto {
         this.minOrderAmount = minOrderAmount;
         this.status = status;
         this.averageRating = averageRating;
-        this.menuList = menuList;
     }
 }

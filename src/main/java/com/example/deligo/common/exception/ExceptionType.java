@@ -13,6 +13,12 @@ public enum ExceptionType {
     MENU_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "이미 삭제된 메뉴입니다."),
     ALREADY_ORDERED(HttpStatus.BAD_REQUEST, "승인된 주문은 취소할 수 없습니다. 가게에 연락해주세요."),
     ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "이미 취소된 주문입니다."),
+    MAX_STORE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "최대 가게 수를 초과했습니다."),
+    REVIEW_CONDITION_NOT_MET(HttpStatus.BAD_REQUEST, "리뷰를 작성할 수 있는 상태가 아닙니다."),
+    REVIEW_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "해당 주문에 대한 리뷰가 이미 존재합니다."),
+    REVIEW_ALREADY_HAS_COMMENT(HttpStatus.BAD_REQUEST, "해당 리뷰에 이미 사장님 댓글이 존재합니다."),
+    INVALID_RATING(HttpStatus.BAD_REQUEST, "별점은 1~5점 사이여야 합니다."),
+    EMPTY_REVIEW_CONTENT(HttpStatus.BAD_REQUEST, "리뷰 내용은 비어 있을 수 없습니다."),
 
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "로그인 정보가 올바르지 않습니다."),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다."),
@@ -23,19 +29,12 @@ public enum ExceptionType {
 
     NO_PERMISSION_ACTION(HttpStatus.FORBIDDEN, "권한이 없는 작업입니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND,  "해당 사용자를 찾을 수 없습니다."),
-    //최대 가게 수 초과 예외 타입
-    MAX_STORE_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "최대 가게 수를 초과했습니다."),
+
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 가게를 찾을 수 없습니다."),
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 메뉴를 찾을 수 없습니다."),
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 주문을 찾을 수 없습니다."),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 리뷰를 찾을 수 없습니다."),
     OWNER_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사장님 댓글을 찾을 수 없습니다."),
-
-    REVIEW_CONDITION_NOT_MET(HttpStatus.BAD_REQUEST, "리뷰를 작성할 수 있는 상태가 아닙니다."),
-    REVIEW_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "해당 주문에 대한 리뷰가 이미 존재합니다."),
-    REVIEW_ALREADY_HAS_COMMENT(HttpStatus.BAD_REQUEST, "해당 리뷰에 이미 사장님 댓글이 존재합니다."),
-    INVALID_RATING(HttpStatus.BAD_REQUEST, "별점은 1~5점 사이여야 합니다."),
-    EMPTY_REVIEW_CONTENT(HttpStatus.BAD_REQUEST, "리뷰 내용은 비어 있을 수 없습니다."),
 
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버에 문제가 발생했습니다.");
 
