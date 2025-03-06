@@ -13,6 +13,9 @@ import java.util.Optional;
 
 public interface StoreRepository extends JpaRepository<Store, Long> {
 
+    // User ID로 가게 개수 세기
+    long countByUserId(Long userId);
+
     //N+1문제 해결을 위해 JOIN FETCH를 이용( 한 번에 DTO에서 가져오도록 해서 성능을 높임)
     @Query("SELECT new com.example.deligo.store.dto.Response.StoreResponseDto(s.id, o.id, s.name, s.category, s.openTime, s.closeTime, s.minOrderAmount, s.status, s.averageRating)" +
     "FROM Store s JOIN s.owner o WHERE  s.id = :id")

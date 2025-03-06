@@ -1,5 +1,6 @@
 package com.example.deligo.store.controller;
 
+import com.example.deligo.common.annotation.UserId;
 import com.example.deligo.common.dto.PaginationResponse;
 import com.example.deligo.store.dto.Request.StoreSaveRequestDto;
 import com.example.deligo.store.dto.Request.StoreUpdateRequestDto;
@@ -24,10 +25,11 @@ public class StoreController {
     //가게 등록
     @PostMapping
     public ResponseEntity<StoreSaveResponseDto> createStore(
+            @UserId Long userId,
            @Valid @RequestBody StoreSaveRequestDto dto,
             HttpServletRequest request // HttpServletRequest를 통해 userId를 받아옴
     ) {
-        Long userId = (Long) request.getAttribute("userId"); // 필터에서 설정한 userId 가져오기
+         userId = (Long) request.getAttribute("userId"); // 필터에서 설정한 userId 가져오기
         StoreSaveResponseDto responseDto = storeService.createStore(userId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
