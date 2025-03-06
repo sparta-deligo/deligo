@@ -52,22 +52,18 @@ public class ReviewService {
     public ReviewResponse createReview(Long userId, ReviewRequest request) {
         Order order = getOrderById(request.getOrderId());
 
-        // 주문한 유저가 맞는지 확인
         if (!order.getUser().getId().equals(userId)) {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION, "주문한 사용자만 리뷰를 작성할 수 있습니다.");
         }
 
-        // 주문이 배달 완료 상태인지 확인
         if (order.getStatus() != OrderStatus.DELIVERED) {
             throw new CustomException(ExceptionType.REVIEW_CONDITION_NOT_MET, "배달 완료된 주문만 리뷰를 작성할 수 있습니다.");
         }
 
-        // 동일 주문에 대해 이미 리뷰가 작성되었는지 확인
         reviewRepository.findByOrderId(order.getId()).ifPresent(existing -> {
             throw new CustomException(ExceptionType.REVIEW_ALREADY_EXISTS, "이미 작성된 리뷰가 존재합니다.");
         });
 
-        // 리뷰 생성
         Review review = Review.builder()
                 .user(order.getUser())
                 .order(order)
@@ -77,6 +73,7 @@ public class ReviewService {
                 .build();
 
         reviewRepository.save(review);
+        updateStoreAverageRating(review.getOrder().getStore().getId());
         return new ReviewResponse(review, null);
     }
 
@@ -84,12 +81,12 @@ public class ReviewService {
     public ReviewResponse updateReview(Long userId, Long reviewId, ReviewRequest request) {
         Review review = getReviewById(reviewId);
 
-        // 작성자 본인만 수정 가능
         if (!review.getUser().getId().equals(userId)) {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION, "자신의 리뷰만 수정할 수 있습니다.");
         }
 
         review.updateReview(review.getUser(), request.getRating(), request.getContent());
+        updateStoreAverageRating(review.getOrder().getStore().getId());
         return new ReviewResponse(review, null);
     }
 
@@ -97,12 +94,12 @@ public class ReviewService {
     public void deleteReview(Long userId, Long reviewId) {
         Review review = getReviewById(reviewId);
 
-        // 작성자 본인만 삭제 가능
         if (!review.getUser().getId().equals(userId)) {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION, "자신의 리뷰만 삭제할 수 있습니다.");
         }
 
         reviewRepository.delete(review);
+        updateStoreAverageRating(review.getOrder().getStore().getId());
     }
 
     private Order getOrderById(Long orderId) {
@@ -113,5 +110,10 @@ public class ReviewService {
     private Review getReviewById(Long reviewId) {
         return reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ExceptionType.REVIEW_NOT_FOUND, "해당 리뷰를 찾을 수 없습니다."));
+    }
+
+    private void updateStoreAverageRating(Long storeId) {
+        double newAverage = reviewRepository.calculateAverageRatingByStoreId(storeId);
+        reviewRepository.updateStoreAverageRating(storeId, newAverage);
     }
 }
