@@ -3,6 +3,7 @@ package com.example.deligo.review.service;
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.common.exception.ExceptionType;
 import com.example.deligo.order.entity.Order;
+import com.example.deligo.order.entity.OrderStatus;
 import com.example.deligo.order.repository.OrderRepository;
 import com.example.deligo.review.dto.request.ReviewRequest;
 import com.example.deligo.review.dto.response.ReviewResponse;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -50,21 +52,26 @@ public class ReviewService {
     public ReviewResponse createReview(Long userId, ReviewRequest request) {
         Order order = getOrderById(request.getOrderId());
 
+        // 주문한 유저가 맞는지 확인
         if (!order.getUser().getId().equals(userId)) {
-            throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
+            throw new CustomException(ExceptionType.NO_PERMISSION_ACTION, "주문한 사용자만 리뷰를 작성할 수 있습니다.");
         }
 
-        if (!order.isDelivered()) {
-            throw new CustomException(ExceptionType.REVIEW_CONDITION_NOT_MET);
+        // 주문이 배달 완료 상태인지 확인
+        if (order.getStatus() != OrderStatus.DELIVERED) {
+            throw new CustomException(ExceptionType.REVIEW_CONDITION_NOT_MET, "배달 완료된 주문만 리뷰를 작성할 수 있습니다.");
         }
 
+        // 동일 주문에 대해 이미 리뷰가 작성되었는지 확인
         reviewRepository.findByOrderId(order.getId()).ifPresent(existing -> {
-            throw new CustomException(ExceptionType.REVIEW_ALREADY_EXISTS);
+            throw new CustomException(ExceptionType.REVIEW_ALREADY_EXISTS, "이미 작성된 리뷰가 존재합니다.");
         });
 
+        // 리뷰 생성
         Review review = Review.builder()
                 .user(order.getUser())
                 .order(order)
+                .store(order.getStore())
                 .rating(request.getRating())
                 .content(request.getContent())
                 .build();
@@ -77,8 +84,9 @@ public class ReviewService {
     public ReviewResponse updateReview(Long userId, Long reviewId, ReviewRequest request) {
         Review review = getReviewById(reviewId);
 
+        // 작성자 본인만 수정 가능
         if (!review.getUser().getId().equals(userId)) {
-            throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
+            throw new CustomException(ExceptionType.NO_PERMISSION_ACTION, "자신의 리뷰만 수정할 수 있습니다.");
         }
 
         review.updateReview(review.getUser(), request.getRating(), request.getContent());
@@ -89,19 +97,21 @@ public class ReviewService {
     public void deleteReview(Long userId, Long reviewId) {
         Review review = getReviewById(reviewId);
 
+        // 작성자 본인만 삭제 가능
         if (!review.getUser().getId().equals(userId)) {
-            throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
+            throw new CustomException(ExceptionType.NO_PERMISSION_ACTION, "자신의 리뷰만 삭제할 수 있습니다.");
         }
-        review.deleteReview(review.getUser());
+
+        reviewRepository.delete(review);
     }
 
     private Order getOrderById(Long orderId) {
         return orderRepository.findById(orderId)
-                .orElseThrow(() -> new CustomException(ExceptionType.ORDER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ExceptionType.ORDER_NOT_FOUND, "해당 주문을 찾을 수 없습니다."));
     }
 
     private Review getReviewById(Long reviewId) {
         return reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new CustomException(ExceptionType.REVIEW_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ExceptionType.REVIEW_NOT_FOUND, "해당 리뷰를 찾을 수 없습니다."));
     }
 }
