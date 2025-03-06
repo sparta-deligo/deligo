@@ -71,4 +71,8 @@ public class Store extends BaseDeletableEntity {
         this.minOrderAmount = minOrderAmount;
         this.status = status;
     }
+
+    public Long getOwnerId() {
+        return this.owner.getId();  // 가게 소유자 ID 반환
+    }
 }
