@@ -33,7 +33,7 @@ public class OwnerCommentController {
         return ResponseEntity.created(URI.create("/reviews/" + reviewId + "/comments")).build();
     }
 
-    @PutMapping("/comments/{commentId}")
+    @PutMapping("/{reviewId}/comments/{commentId}")
     public ResponseEntity<Void> updateOwnerComment(
             @UserId Long userId,
             @PathVariable Long commentId,
@@ -43,7 +43,7 @@ public class OwnerCommentController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/comments/{commentId}")
+    @DeleteMapping("/{reviewId}/comments/{commentId}")
     public ResponseEntity<Void> deleteOwnerComment(
             @UserId Long userId,
             @PathVariable Long commentId

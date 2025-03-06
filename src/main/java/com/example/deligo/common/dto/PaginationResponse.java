@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
@@ -22,6 +23,7 @@ public class PaginationResponse<T> {
                 .build();
     }
 
+    @Getter // get 메서드 필요
     @Builder
     private static class PaginationInfo {
 
