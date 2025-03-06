@@ -118,7 +118,7 @@ public class StoreService {
             throw new CustomException(ExceptionType.UNAUTHORIZED); // 접근 권한이 없는 경우
         }
 
-        store.Update(dto);
+        store.update(dto);
 
         // 메뉴 목록 가져오기
         List<MenuResponse> menuList = menuRepository.findAllByStore(store)
@@ -137,7 +137,7 @@ public class StoreService {
                 store.getStatus(),
                 store.getAverageRating(),
                 menuList
-                );
+        );
     }
 
     //가게 삭제

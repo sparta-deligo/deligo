@@ -9,16 +9,21 @@ import java.time.LocalTime;
 @Getter
 public class UpdateStoreRequest {
 
-    private final Long ownerId;
-    private final String name;
-    private final StoreCategory storeCategory;
-    private final LocalTime openTime;
-    private final LocalTime closeTime;
-    private final int minOrderAmount;
-    private final StoreStatus status;
+    private String name;
+    private StoreCategory storeCategory;
+    private LocalTime openTime;
+    private LocalTime closeTime;
+    private int minOrderAmount;
+    private StoreStatus status;
 
-    public UpdateStoreRequest(Long ownerId, String name, StoreCategory storeCategory, LocalTime openTime, LocalTime closeTime, int minOrderAmount, StoreStatus status) {
-        this.ownerId = ownerId;
+    public UpdateStoreRequest(
+            String name,
+            StoreCategory storeCategory,
+            LocalTime openTime,
+            LocalTime closeTime,
+            int minOrderAmount,
+            StoreStatus status
+    ) {
         this.name = name;
         this.storeCategory = storeCategory;
         this.openTime = openTime;
