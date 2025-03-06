@@ -40,7 +40,7 @@ public class OrderController {
         return ResponseEntity.ok().body(orderServ.cancelOrder(userId, orderId));
     }
 
-    @PatchMapping("/owner/{orderId}/")
+    @PatchMapping("/owner/{orderId}")
     public ResponseEntity<SetStatusResponse> editOrderStatus(@PathVariable Long orderId, @RequestBody OrderEditRequest reqDto, @UserId Long userId) {
         return ResponseEntity.ok().body(orderServ.setOrderStatus(userId, orderId, reqDto.getOrderStatus()));
    }
