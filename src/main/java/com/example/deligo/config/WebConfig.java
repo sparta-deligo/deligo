@@ -1,5 +1,6 @@
-package com.example.deligo.common.jwt;
+package com.example.deligo.config;
 
+import com.example.deligo.config.resolver.UserIdArgumentResolver;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
