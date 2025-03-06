@@ -10,6 +10,7 @@ public enum ExceptionType {
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "해당 이메일로 가입한 계정이 존재합니다."),
     DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "해당 닉네임으로 가입한 계정이 존재합니다."), // 닉네임 중복 예외 추가
     ACTIVE_ORDER_EXISTS(HttpStatus.BAD_REQUEST, "진행 중인 주문이 있어 요청을 처리할 수 없습니다."), // 주문 관련 예외 추가,
+    MENU_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "이미 삭제된 메뉴입니다."),
     ALREADY_ORDERED(HttpStatus.BAD_REQUEST, "승인된 주문은 취소할 수 없습니다. 가게에 연락해주세요."),
     ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "이미 취소된 주문입니다."),
 
@@ -27,11 +28,11 @@ public enum ExceptionType {
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 메뉴를 찾을 수 없습니다."),
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 주문을 찾을 수 없습니다."),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 리뷰를 찾을 수 없습니다."),
-    OWNER_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사장님 댓글을 찾을 수 없습니다."), // ✅ 추가됨
+    OWNER_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사장님 댓글을 찾을 수 없습니다."),
 
     REVIEW_CONDITION_NOT_MET(HttpStatus.BAD_REQUEST, "리뷰를 작성할 수 있는 상태가 아닙니다."),
     REVIEW_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "해당 주문에 대한 리뷰가 이미 존재합니다."),
-    REVIEW_ALREADY_HAS_COMMENT(HttpStatus.BAD_REQUEST, "해당 리뷰에 이미 사장님 댓글이 존재합니다."), // ✅ 추가됨
+    REVIEW_ALREADY_HAS_COMMENT(HttpStatus.BAD_REQUEST, "해당 리뷰에 이미 사장님 댓글이 존재합니다."),
     INVALID_RATING(HttpStatus.BAD_REQUEST, "별점은 1~5점 사이여야 합니다."),
     EMPTY_REVIEW_CONTENT(HttpStatus.BAD_REQUEST, "리뷰 내용은 비어 있을 수 없습니다."),
 
