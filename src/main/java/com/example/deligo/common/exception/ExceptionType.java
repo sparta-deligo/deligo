@@ -10,6 +10,8 @@ public enum ExceptionType {
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "해당 이메일로 가입한 계정이 존재합니다."),
     DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "해당 닉네임으로 가입한 계정이 존재합니다."), // 닉네임 중복 예외 추가
     ACTIVE_ORDER_EXISTS(HttpStatus.BAD_REQUEST, "진행 중인 주문이 있어 요청을 처리할 수 없습니다."), // 주문 관련 예외 추가,
+    ALREADY_ORDERED(HttpStatus.BAD_REQUEST, "승인된 주문은 취소할 수 없습니다. 가게에 연락해주세요."),
+    ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "이미 취소된 주문입니다."),
 
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "로그인 정보가 올바르지 않습니다."),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다."),
@@ -19,8 +21,6 @@ public enum ExceptionType {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증되지 않은 요청입니다."),
 
     NO_PERMISSION_ACTION(HttpStatus.FORBIDDEN, "권한이 없는 작업입니다."),
-    ALREADY_ORDERED(HttpStatus.FORBIDDEN, "승인된 주문은 취소할 수 없습니다. 가게에 연락해주세요."),
-    ALREADY_CANCELED(HttpStatus.FORBIDDEN, "이미 취소된 주문입니다."),
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다."),
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 가게를 찾을 수 없습니다."),

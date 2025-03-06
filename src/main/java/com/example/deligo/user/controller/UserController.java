@@ -33,7 +33,6 @@ public class UserController {
         return ResponseEntity.ok(Map.of("token", token));
     }
 
-
     @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponse> deleteUser(
             @PathVariable Long userId,
@@ -44,5 +43,3 @@ public class UserController {
         return ResponseEntity.ok(new ApiResponse("회원탈퇴 완료"));
     }
 }
-
-
