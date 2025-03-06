@@ -12,6 +12,8 @@ import java.util.Optional;
 
 public interface StoreRepository extends JpaRepository<Store, Long> {
 
+    Page<Store> findByNameContaining(String name, Pageable pageable);
+
     @Query("SELECT s FROM  Store s WHERE s.deletedAt IS NULL")
     Page<Store> findAllActiveStores(Pageable pageable); //삭제되지 않은 가게만 조회
 
