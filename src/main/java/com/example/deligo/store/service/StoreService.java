@@ -3,6 +3,8 @@ package com.example.deligo.store.service;
 import com.example.deligo.common.dto.PaginationResponse;
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.common.exception.ExceptionType;
+import com.example.deligo.menu.dto.response.MenuResponse;
+import com.example.deligo.menu.repository.MenuRepository;
 import com.example.deligo.store.dto.Request.StoreSaveRequestDto;
 import com.example.deligo.store.dto.Request.StoreUpdateRequestDto;
 import com.example.deligo.store.dto.Response.StoreResponseDto;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
+    private final MenuRepository menuRepository;
 
     //가게 생성
     @Transactional
@@ -64,26 +68,42 @@ public class StoreService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
         Page<Store> storePage = storeRepository.findAllActiveStores(pageable);
 
-        Page<StoreResponseDto> dtoPage = storePage.map(store -> new StoreResponseDto(
-                store.getId(),
-                store.getOwner().getId(),
-                store.getName(),
-                store.getCategory(),
-                store.getOpenTime(),
-                store.getCloseTime(),
-                store.getMinOrderAmount(),
-                store.getStatus(),
-                store.getAverageRating()
-        ));
+
+        Page<StoreResponseDto> dtoPage = storePage.map(store -> {
+            // 메뉴 목록 가져오기
+            List<MenuResponse> menuList = menuRepository.findAllByStore(store)
+                    .stream()
+                    .map(MenuResponse::from) // MenuResponse 변환 적용
+                    .collect(Collectors.toList());
+
+            return new StoreResponseDto(
+                    store.getId(),
+                    store.getOwner().getId(),
+                    store.getName(),
+                    store.getCategory(),
+                    store.getOpenTime(),
+                    store.getCloseTime(),
+                    store.getMinOrderAmount(),
+                    store.getStatus(),
+                    store.getAverageRating(),
+                    menuList // 메뉴 추가
+            );
+        });
 
         return new PaginationResponse<>(dtoPage);
     }
 
     @Transactional(readOnly = true)
     public StoreResponseDto getByStoreID(Long id) {
-        Store store = storeRepository.findActiveStoreById(id).orElseThrow(
-                ()->new CustomException(ExceptionType.STORE_NOT_FOUND)
-        );
+        Store store = storeRepository.findActiveStoreById(id)
+                .orElseThrow(() -> new CustomException(ExceptionType.STORE_NOT_FOUND));
+
+        // 메뉴 목록 가져오기
+        List<MenuResponse> menuList = menuRepository.findAllByStore(store)
+                .stream()
+                .map(MenuResponse::from) // MenuResponse 변환 적용
+                .collect(Collectors.toList());
+
         return new StoreResponseDto(
                 store.getId(),
                 store.getOwner().getId(),
@@ -93,7 +113,8 @@ public class StoreService {
                 store.getCloseTime(),
                 store.getMinOrderAmount(),
                 store.getStatus(),
-                store.getAverageRating()
+                store.getAverageRating(),
+                menuList
         );
     }
 
@@ -110,6 +131,13 @@ public class StoreService {
         }
 
         store.Update(dto);
+
+        // 메뉴 목록 가져오기
+        List<MenuResponse> menuList = menuRepository.findAllByStore(store)
+                .stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toList());
+
         return new StoreResponseDto(
                 store.getId(),
                 store.getOwner().getId(),
@@ -119,7 +147,9 @@ public class StoreService {
                 store.getCloseTime(),
                 store.getMinOrderAmount(),
                 store.getStatus(),
-                store.getAverageRating());
+                store.getAverageRating(),
+                menuList
+                );
     }
 
     //가게 삭제
