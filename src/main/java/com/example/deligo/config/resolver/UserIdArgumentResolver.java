@@ -1,7 +1,9 @@
-package com.example.deligo.common.jwt;
+package com.example.deligo.config.resolver;
 
+import com.example.deligo.common.annotation.UserId;
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.common.exception.ExceptionType;
+import com.example.deligo.common.jwt.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;

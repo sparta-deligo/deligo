@@ -1,5 +1,6 @@
-package com.example.deligo.common.jwt;
+package com.example.deligo.config;
 
+import com.example.deligo.common.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;

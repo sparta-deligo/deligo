@@ -3,7 +3,7 @@ package com.example.deligo.user.service;
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.common.exception.ExceptionType;
 import com.example.deligo.common.jwt.JwtUtil;
-import com.example.deligo.config.PasswordEncoder;
+import com.example.deligo.config.security.PasswordEncoder;
 import com.example.deligo.user.dto.request.LoginRequest;
 import com.example.deligo.user.dto.request.SignupRequest;
 import com.example.deligo.user.dto.response.UserResponse;
