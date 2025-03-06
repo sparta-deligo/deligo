@@ -73,6 +73,9 @@ public class MenuService {
         if(!menu.getStore().getOwner().equals(owner)) {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
         }
+        if(menu.getStatus().equals(MenuStatus.DELETED)) {
+            throw new CustomException(ExceptionType.MENU_ALREADY_DELETED);
+        }
 
         validateNoActiveOrders(menu);
 
