@@ -23,12 +23,8 @@ public class PaginationResponse<T> {
                 .build();
     }
 
-<<<<<<< HEAD
     @Getter // get 메서드 필요
     @Builder
-=======
-    @Getter
->>>>>>> dev
     private static class PaginationInfo {
 
         private final int currentPage;
