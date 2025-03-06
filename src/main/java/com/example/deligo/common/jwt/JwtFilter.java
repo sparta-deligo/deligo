@@ -22,7 +22,7 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class JwtFilter implements Filter {
-
+    // JwtUtil과 UserRepository는 의존성 주입을 통해 가져옴
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
