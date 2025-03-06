@@ -55,6 +55,9 @@ public class MenuService {
         if(!menu.getStore().getOwner().equals(owner)) {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
         }
+        if(request.getStatus().equals(MenuStatus.DELETED)) {
+            throw new CustomException(ExceptionType.INVALID_REQUEST, "메뉴 삭제 시 별도의 요청이 필요합니다.");
+        }
 
         menu.update(
                 request.getName(),
