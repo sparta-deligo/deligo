@@ -11,6 +11,7 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 public class OrderSaveResponse {
+    private Long orderId;
     private Long userId;
     private Long storeId;
     private Map<Long, Integer> menus;
@@ -22,6 +23,7 @@ public class OrderSaveResponse {
     private OrderStatus orderStatus;
 
     public OrderSaveResponse(Order order, Map<Long, Integer> menus) {
+        this.orderId = order.getId();
         this.menus = menus;
         this.createdAt = order.getCreatedAt();
         this.deliverAddress = order.getDeliverAddress();
