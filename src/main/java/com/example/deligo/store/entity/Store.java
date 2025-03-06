@@ -2,7 +2,7 @@ package com.example.deligo.store.entity;
 import com.example.deligo.common.entity.BaseDeletableEntity;
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.common.exception.ExceptionType;
-import com.example.deligo.store.dto.Request.StoreUpdateRequestDto;
+import com.example.deligo.store.dto.request.UpdateStoreRequest;
 import com.example.deligo.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -63,7 +63,7 @@ public class Store extends BaseDeletableEntity {
         this.status = status;
     }
 
-    public void Update(StoreUpdateRequestDto dto) {
+    public void Update(UpdateStoreRequest dto) {
         this.name = name;
         this.category = category;
         this.openTime = openTime;

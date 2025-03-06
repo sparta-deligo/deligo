@@ -1,4 +1,4 @@
-package com.example.deligo.store.dto.Response;
+package com.example.deligo.store.dto.request;
 
 import com.example.deligo.store.entity.StoreCategory;
 import com.example.deligo.store.entity.StoreStatus;
@@ -7,9 +7,8 @@ import lombok.Getter;
 import java.time.LocalTime;
 
 @Getter
-public class StoreSaveResponseDto {
+public class UpdateStoreRequest {
 
-    private final Long id;
     private final Long ownerId;
     private final String name;
     private final StoreCategory storeCategory;
@@ -17,10 +16,8 @@ public class StoreSaveResponseDto {
     private final LocalTime closeTime;
     private final int minOrderAmount;
     private final StoreStatus status;
-    private final Double averageRating;
 
-    public StoreSaveResponseDto(Long id, Long ownerId, String name, StoreCategory storeCategory, LocalTime openTime, LocalTime closeTime, int minOrderAmount, StoreStatus status, Double averageRating) {
-        this.id = id;
+    public UpdateStoreRequest(Long ownerId, String name, StoreCategory storeCategory, LocalTime openTime, LocalTime closeTime, int minOrderAmount, StoreStatus status) {
         this.ownerId = ownerId;
         this.name = name;
         this.storeCategory = storeCategory;
@@ -28,6 +25,5 @@ public class StoreSaveResponseDto {
         this.closeTime = closeTime;
         this.minOrderAmount = minOrderAmount;
         this.status = status;
-        this.averageRating = averageRating;
     }
 }

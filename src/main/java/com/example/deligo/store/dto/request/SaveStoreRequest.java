@@ -1,4 +1,4 @@
-package com.example.deligo.store.dto.Request;
+package com.example.deligo.store.dto.request;
 
 import com.example.deligo.store.entity.StoreCategory;
 import com.example.deligo.store.entity.StoreStatus;
@@ -8,7 +8,7 @@ import lombok.Getter;
 import java.time.LocalTime;
 
 @Getter
-public class StoreSaveRequestDto {
+public class SaveStoreRequest {
 
     @NotNull(message = "소유자 ID는 필수입니다.")
     private Long ownerId;
