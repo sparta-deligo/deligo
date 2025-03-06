@@ -2,7 +2,7 @@ package com.example.deligo.review.controller;
 
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.common.exception.ExceptionType;
-import com.example.deligo.common.jwt.UserId;
+import com.example.deligo.common.annotation.UserId;
 import com.example.deligo.review.dto.request.OwnerCommentRequest;
 import com.example.deligo.review.service.OwnerCommentService;
 import jakarta.validation.Valid;

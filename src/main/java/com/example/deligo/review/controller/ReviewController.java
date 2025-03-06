@@ -1,7 +1,7 @@
 package com.example.deligo.review.controller;
 
 import com.example.deligo.common.dto.PaginationResponse;
-import com.example.deligo.common.jwt.UserId;
+import com.example.deligo.common.annotation.UserId;
 import com.example.deligo.review.dto.request.ReviewRequest;
 import com.example.deligo.review.dto.response.ReviewResponse;
 import com.example.deligo.review.service.ReviewService;

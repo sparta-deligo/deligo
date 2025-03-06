@@ -18,8 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.example.deligo.common.exception.ExceptionType.*;
 import static com.example.deligo.order.entity.OrderStatus.CANCELED;
@@ -42,23 +41,20 @@ public class OrderServiceImpl implements OrderService {
     public SaveResponse saveOrder(Long userId, SaveRequest reqDto) {
         User user = userServ.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         Store store = storeServ.findById(reqDto.getStoreId()).orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
-        List<Menu> menus = reqDto.getMenuIds().stream()
-                .map(id -> menuServ.findById(id).orElseThrow(() -> new CustomException(MENU_NOT_FOUND)))
-                .toList();
-
         Order order = new Order(user, store, new ArrayList<>(), reqDto);
         orderRepo.save(order);
 
-        List<OrderItem> orderItems = menus.stream()
-                .map(menu -> {
-                    OrderItem orderItem = new OrderItem(menu, order, menu.getPrice(), reqDto.getQuantity());
-                    order.addOrderItems(orderItem);
-                    return orderItem;
-                })
-                .toList();
+        List<OrderItem> orderItems = new ArrayList<>();
+        Map<Long, Integer> menus = reqDto.getMenus();
+        for (Long id : menus.keySet()) {
+            Menu menu = menuServ.findById(id).orElseThrow(() -> new CustomException(MENU_NOT_FOUND));
+            OrderItem orderItem = new OrderItem(menu, order, menu.getPrice(), menus.get(id));
+            order.addOrderItems(orderItem);
+            orderItems.add(orderItem);
+        }
         orderItemRepo.saveAll(orderItems);
 
-        return new SaveResponse(order);
+        return new SaveResponse(order, reqDto.getMenus());
     }
 
     @Override
