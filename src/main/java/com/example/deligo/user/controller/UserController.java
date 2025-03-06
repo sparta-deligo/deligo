@@ -35,7 +35,7 @@ public class UserController {
         return ResponseEntity.ok(tokenInfo);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponse> deleteUser(
             @UserId Long userId,
             @Valid @RequestBody DeleteUserRequest request
@@ -68,9 +68,3 @@ public class UserController {
         return ResponseEntity.ok(new ApiResponse("로그아웃 완료"));
     }
 }
-
-
-
-
-
-

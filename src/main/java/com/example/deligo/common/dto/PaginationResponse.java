@@ -22,7 +22,7 @@ public class PaginationResponse<T> {
                 .build();
     }
 
-    @Builder
+    @Getter
     private static class PaginationInfo {
 
         private final int currentPage;

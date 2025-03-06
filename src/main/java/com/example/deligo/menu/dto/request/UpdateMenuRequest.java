@@ -1,5 +1,6 @@
 package com.example.deligo.menu.dto.request;
 
+import com.example.deligo.menu.entity.MenuStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -16,5 +17,5 @@ public class UpdateMenuRequest {
     @NotNull
     private String description;
     @NotNull
-    private String status;
+    private MenuStatus status;
 }
