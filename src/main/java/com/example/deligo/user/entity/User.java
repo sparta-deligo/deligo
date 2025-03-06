@@ -2,12 +2,14 @@ package com.example.deligo.user.entity;
 
 import com.example.deligo.common.entity.BaseDeletableEntity;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@NoArgsConstructor
 @Entity
+@Table(name = "users")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseDeletableEntity {
 
     @Id
@@ -32,10 +34,6 @@ public class User extends BaseDeletableEntity {
         this.password = password;
         this.nickname = nickname;
         this.role = role;
-    }
-
-    public User(long l, String mail, String password, String tester, String roleUser) {
-        super();
     }
 
     public boolean isOwner() {

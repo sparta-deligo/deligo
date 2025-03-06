@@ -1,10 +1,10 @@
 package com.example.deligo.order.controller;
 
+import com.example.deligo.common.jwt.UserId;
 import com.example.deligo.order.dto.request.OrderEditRequest;
 import com.example.deligo.order.dto.request.SaveRequest;
 import com.example.deligo.order.dto.response.*;
 import com.example.deligo.order.service.orderServ.OrderService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,35 +18,30 @@ public class OrderController {
     private final OrderService orderServ;
 
     @PostMapping
-    public ResponseEntity<SaveResponse> saveOrder(HttpServletRequest request,
+    public ResponseEntity<SaveResponse> saveOrder(@UserId Long userId,
                                                   @Valid @RequestBody SaveRequest reqDto) {
 
-        return ResponseEntity.ok().body(orderServ.saveOrder(getLoginUserId(request), reqDto));
+        return ResponseEntity.ok().body(orderServ.saveOrder(userId, reqDto));
     }
 
     @GetMapping("/user/{orderId}")
-    public ResponseEntity<FindResponse> checkMyOrder(@PathVariable Long orderId, HttpServletRequest request) {
-        return ResponseEntity.ok().body(orderServ.findUserOrder(orderId, getLoginUserId(request)));
+    public ResponseEntity<FindResponse> checkMyOrder(@PathVariable Long orderId, @UserId Long userId) {
+        return ResponseEntity.ok().body(orderServ.findUserOrder(userId, orderId));
     }
 
     @GetMapping("/owner/{orderId}")
-    public ResponseEntity<FindStoreOrderResponse> checkStoreOrder(@PathVariable Long orderId, HttpServletRequest request) {
+    public ResponseEntity<FindStoreOrderResponse> checkStoreOrder(@PathVariable Long orderId, @UserId Long userId) {
 
-        return ResponseEntity.ok().body(orderServ.findStoreOrder(getLoginUserId(request), orderId));
+        return ResponseEntity.ok().body(orderServ.findStoreOrder(userId, orderId));
     }
 
     @PatchMapping("/user/{orderId}")
-    public ResponseEntity<OrderCancelResponse> cancelOrder(@PathVariable Long orderId, HttpServletRequest request) {
-        Long loginUserId = getLoginUserId(request);
-        return ResponseEntity.ok().body(orderServ.cancelOrder(loginUserId, orderId));
+    public ResponseEntity<OrderCancelResponse> cancelOrder(@PathVariable Long orderId, @UserId Long userId) {
+        return ResponseEntity.ok().body(orderServ.cancelOrder(userId, orderId));
     }
 
     @PatchMapping("/owner/{orderId}/")
-    public ResponseEntity<SetStatusResponse> editOrderStatus(@PathVariable Long orderId, @RequestBody OrderEditRequest reqDto, HttpServletRequest request) {
-        return ResponseEntity.ok().body(orderServ.setOrderStatus(getLoginUserId(request), orderId, reqDto.getOrderStatus()));
+    public ResponseEntity<SetStatusResponse> editOrderStatus(@PathVariable Long orderId, @RequestBody OrderEditRequest reqDto, @UserId Long userId) {
+        return ResponseEntity.ok().body(orderServ.setOrderStatus(userId, orderId, reqDto.getOrderStatus()));
    }
-
-    private static Long getLoginUserId(HttpServletRequest request) {
-        return (Long) request.getAttribute("userId");
-    }
 }

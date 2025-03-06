@@ -21,56 +21,56 @@ import java.net.URI;
 @RequestMapping("/reviews")
 @RequiredArgsConstructor
 public class ReviewController {
-
-    private final ReviewService reviewService;
-    private final JwtUtil jwtUtil;
-    private final UserService userService;
-
-    private User getAuthenticatedUser(String token) {
-        if (token == null || !token.startsWith("Bearer ")) {
-            throw new CustomException(ExceptionType.UNAUTHORIZED);
-        }
-        String jwt = token.substring(7);
-        return userService.findById(jwtUtil.getUserIdFromToken(jwt));
-    }
-
-    @PostMapping
-    public ResponseEntity<ReviewResponse> createReview(
-            @RequestHeader("Authorization") String token,
-            @Valid @RequestBody ReviewRequest request
-    ) {
-        User user = getAuthenticatedUser(token);
-        ReviewResponse response = reviewService.createReview(user, request);
-        return ResponseEntity.created(URI.create("/reviews/" + response.getId())).body(response);
-    }
-
-    @PutMapping("/{reviewId}")
-    public ResponseEntity<ReviewResponse> updateReview(
-            @RequestHeader("Authorization") String token,
-            @PathVariable Long reviewId,
-            @Valid @RequestBody ReviewRequest request
-    ) {
-        User user = getAuthenticatedUser(token);
-        return ResponseEntity.ok(reviewService.updateReview(user, reviewId, request));
-    }
-
-    @DeleteMapping("/{reviewId}")
-    public ResponseEntity<Void> deleteReview(
-            @RequestHeader("Authorization") String token,
-            @PathVariable Long reviewId
-    ) {
-        User user = getAuthenticatedUser(token);
-        reviewService.deleteReview(user, reviewId);
-        return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/stores/{storeId}/reviews")
-    public ResponseEntity<PaginationResponse<ReviewResponse>> getReviewsByStore(
-            @PathVariable Long storeId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
-        Page<ReviewResponse> reviewPage = reviewService.getReviewsByStore(storeId, page, size);
-        return ResponseEntity.ok(new PaginationResponse<>(reviewPage));
-    }
+//
+//    private final ReviewService reviewService;
+//    private final JwtUtil jwtUtil;
+//    private final UserService userService;
+//
+//    private User getAuthenticatedUser(String token) {
+//        if (token == null || !token.startsWith("Bearer ")) {
+//            throw new CustomException(ExceptionType.UNAUTHORIZED);
+//        }
+//        String jwt = token.substring(7);
+//        return userService.findById(jwtUtil.getUserIdFromToken(jwt));
+//    }
+//
+//    @PostMapping
+//    public ResponseEntity<ReviewResponse> createReview(
+//            @RequestHeader("Authorization") String token,
+//            @Valid @RequestBody ReviewRequest request
+//    ) {
+//        User user = getAuthenticatedUser(token);
+//        ReviewResponse response = reviewService.createReview(user, request);
+//        return ResponseEntity.created(URI.create("/reviews/" + response.getId())).body(response);
+//    }
+//
+//    @PutMapping("/{reviewId}")
+//    public ResponseEntity<ReviewResponse> updateReview(
+//            @RequestHeader("Authorization") String token,
+//            @PathVariable Long reviewId,
+//            @Valid @RequestBody ReviewRequest request
+//    ) {
+//        User user = getAuthenticatedUser(token);
+//        return ResponseEntity.ok(reviewService.updateReview(user, reviewId, request));
+//    }
+//
+//    @DeleteMapping("/{reviewId}")
+//    public ResponseEntity<Void> deleteReview(
+//            @RequestHeader("Authorization") String token,
+//            @PathVariable Long reviewId
+//    ) {
+//        User user = getAuthenticatedUser(token);
+//        reviewService.deleteReview(user, reviewId);
+//        return ResponseEntity.noContent().build();
+//    }
+//
+//    @GetMapping("/stores/{storeId}/reviews")
+//    public ResponseEntity<PaginationResponse<ReviewResponse>> getReviewsByStore(
+//            @PathVariable Long storeId,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size
+//    ) {
+//        Page<ReviewResponse> reviewPage = reviewService.getReviewsByStore(storeId, page, size);
+//        return ResponseEntity.ok(new PaginationResponse<>(reviewPage));
+//    }
 }

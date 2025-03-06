@@ -23,7 +23,7 @@ public class OwnerCommentService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ExceptionType.REVIEW_NOT_FOUND));
 
-        if (!owner.isStoreOwner()) {
+        if (!owner.isOwner()) {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
         }
 

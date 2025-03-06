@@ -4,23 +4,19 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
 public class SaveRequest {
 
-    @Positive
     @NotNull
     private Long storeId;
 
-    @Positive
     @NotNull
-    private List<Long> menuIds = new ArrayList<>();
-
-    @NotNull
-    private int quantity;
+    private Map<Long, Integer> menus;
 
     @NotBlank
     private String deliverAddress;
@@ -33,10 +29,9 @@ public class SaveRequest {
     @Size(max = 50, message = "50자까지만 입력 가능합니다.")
     private String riderComment;
 
-    public SaveRequest(String deliverAddress, List<Long> menuIds, int quantity, String riderComment, String storeComment, Long storeId) {
+    public SaveRequest(String deliverAddress, Map<Long, Integer> menus, String riderComment, String storeComment, Long storeId) {
         this.deliverAddress = deliverAddress;
-        this.menuIds = menuIds;
-        this.quantity = quantity;
+        this.menus = menus;
         this.riderComment = riderComment;
         this.storeComment = storeComment;
         this.storeId = storeId;

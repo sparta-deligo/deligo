@@ -14,5 +14,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @EntityGraph(attributePaths = {"user", "store", "orderItems", "orderItems.menu"})
     @Query("SELECT o FROM Order o WHERE o.id = :id")
-    Optional<Order> findWithId(@Param("id") Long id);
+    Optional<Order> findWithId(Long id);
+
+    @Query("select count(o) > 0 from Order o " +
+            "join o.orderItems oi " +
+            "where oi.menu.id = :menuId " + "and o.status not in ('DELIVERED','CANCELED')") // TODO: 동작 확인 필요
+    Boolean existsActiveOrderByMenuId(@Param("menuId") Long menuId);
 }
