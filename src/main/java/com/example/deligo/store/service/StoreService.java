@@ -39,6 +39,13 @@ public class StoreService {
         User user = userRepository.findById(userId).orElseThrow(
                 ()-> new CustomException(ExceptionType.USER_NOT_FOUND)
         );
+
+        // 이미 사장이 만든 가게 수 확인
+        long storeCount = storeRepository.countByUserId(userId);
+        if (storeCount >= 3) {
+            throw new CustomException(ExceptionType.MAX_STORE_LIMIT_EXCEEDED);  // 최대 가게 수 초과 예외
+        }
+
         Store store = Store.builder()
                 .user(user) // userId로 사용자 객체 가져옴
                 .name(dto.getName())
