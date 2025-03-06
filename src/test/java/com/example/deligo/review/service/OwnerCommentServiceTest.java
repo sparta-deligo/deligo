@@ -9,10 +9,14 @@ import com.example.deligo.review.repository.ReviewRepository;
 import com.example.deligo.store.entity.Store;
 import com.example.deligo.user.entity.User;
 import com.example.deligo.user.repository.UserRepository;
+import com.example.deligo.store.entity.StoreCategory;
+import com.example.deligo.store.entity.StoreStatus;
+import com.example.deligo.order.entity.OrderStatus;
 import com.example.deligo.user.entity.UserRole;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
 
+import java.time.LocalTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,17 +44,16 @@ class OwnerCommentServiceTest {
 
     @BeforeEach
     void setUp() {
-        org.mockito.MockitoAnnotations.openMocks(this);
-
+        MockitoAnnotations.openMocks(this);
         owner = new User("test@example.com", "password", "Test User", UserRole.OWNER);
 
-        Store store = mock(Store.class);
-        when(store.getOwnerId()).thenReturn(owner.getId());
-
-        Order order = mock(Order.class);
-        when(order.getStore()).thenReturn(store);
+        store = new Store(owner, "Test Store", StoreCategory.KOREAN,
+                LocalTime.of(9, 0), LocalTime.of(22, 0), 10000, StoreStatus.OPEN);
+        
+        order = new Order(owner, store, OrderStatus.DELIVERED);
+        
         review = new Review(owner, order, 5, "Great service!", store);
-
+        
         ownerComment = new OwnerComment(owner, review, "Great comment!");
     }
 
