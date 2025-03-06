@@ -76,19 +76,7 @@ public class StoreService {
         Page<Store> storePage = storeRepository.findAllActiveStores(pageable);
 
 
-        Page<StoreListResponse> dtoPage = storePage.map(store -> {
-            return new StoreListResponse(
-                    store.getId(),
-                    store.getOwner().getId(),
-                    store.getName(),
-                    store.getCategory(),
-                    store.getOpenTime(),
-                    store.getCloseTime(),
-                    store.getMinOrderAmount(),
-                    store.getStatus(),
-                    store.getAverageRating()
-            );
-        });
+        Page<StoreListResponse> dtoPage = storePage.map(StoreListResponse::from);
 
         return new PaginationResponse<>(dtoPage);
     }
