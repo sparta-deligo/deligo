@@ -40,7 +40,7 @@ public class UserService {
     }
 
     @Transactional
-    public Map<String, String> login(LoginRequest request) {
+    public String login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new CustomException(ExceptionType.INVALID_CREDENTIALS));
 
@@ -48,8 +48,9 @@ public class UserService {
             throw new CustomException(ExceptionType.INVALID_CREDENTIALS);
         }
 
-        return jwtUtil.generateToken(user.getId());
+        return jwtUtil.generateToken(user.getId()).get("token");
     }
+
 
     @Transactional
     public UserResponse updateUser(Long userId, UpdateUserRequest request) {

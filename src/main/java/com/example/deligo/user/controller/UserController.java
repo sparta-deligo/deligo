@@ -30,12 +30,12 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginRequest request) {
-        Map<String, String> tokenInfo = userService.login(request);
-        return ResponseEntity.ok(tokenInfo);
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+        String token = userService.login(request);
+        return ResponseEntity.ok(Map.of("token", token));
     }
 
-    @DeleteMapping("/{userId}")
+    @DeleteMapping
     public ResponseEntity<ApiResponse> deleteUser(
             @UserId Long userId,
             @Valid @RequestBody DeleteUserRequest request
