@@ -1,7 +1,7 @@
 package com.example.deligo.store.controller;
 
+import com.example.deligo.common.annotation.UserId;
 import com.example.deligo.common.dto.PaginationResponse;
-import com.example.deligo.common.jwt.UserId;
 import com.example.deligo.store.dto.Request.StoreSaveRequestDto;
 import com.example.deligo.store.dto.Request.StoreUpdateRequestDto;
 import com.example.deligo.store.dto.Response.StoreResponseDto;

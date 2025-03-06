@@ -8,13 +8,14 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
 public class SaveResponse {
     private Long userId;
     private Long storeId;
-    private List<Long> menuId;
+    private Map<Long, Integer> menus;
     private String deliverAddress;
     private String storeComment;
     private String riderComment;
@@ -22,11 +23,8 @@ public class SaveResponse {
     private LocalDateTime updatedAt;
     private OrderStatus orderStatus;
 
-    public SaveResponse(Order order) {
-        List<OrderItem> orderItems = order.getOrderItems();
-        this.menuId = orderItems.stream()
-                .map(orderItem -> orderItem.getMenu().getId())
-                .toList();
+    public SaveResponse(Order order, Map<Long, Integer> menus) {
+        this.menus = menus;
         this.createdAt = order.getCreatedAt();
         this.deliverAddress = order.getDeliverAddress();
         this.storeId = order.getStore().getId();

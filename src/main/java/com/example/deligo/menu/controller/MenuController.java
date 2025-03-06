@@ -1,5 +1,6 @@
 package com.example.deligo.menu.controller;
 
+import com.example.deligo.common.annotation.UserId;
 import com.example.deligo.common.dto.ApiResponse;
 import com.example.deligo.menu.dto.request.CreateMenuRequest;
 import com.example.deligo.menu.dto.request.UpdateMenuRequest;
@@ -14,13 +15,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/menus")
-public class MenuController {  // TODO: 회원가입 & 로그인 로직 구현 시 userId 로직 변경 필요
+public class MenuController {
 
     private final MenuService menuService;
 
     @PostMapping
     public ResponseEntity<MenuResponse> createMenu(
-            @RequestParam Long userId,
+            @UserId Long userId,
             @Valid @RequestBody CreateMenuRequest request
     ) {
         return new ResponseEntity<>(menuService.create(userId, request), HttpStatus.CREATED);
@@ -28,7 +29,7 @@ public class MenuController {  // TODO: 회원가입 & 로그인 로직 구현 �
 
     @PutMapping("/{menuId}")
     public ResponseEntity<MenuResponse> updateMenu(
-            @RequestParam Long userId,
+            @UserId Long userId,
             @PathVariable Long menuId,
             @Valid @RequestBody UpdateMenuRequest request
     ) {
@@ -37,7 +38,7 @@ public class MenuController {  // TODO: 회원가입 & 로그인 로직 구현 �
 
     @DeleteMapping("/{menuId}")
     public ResponseEntity<ApiResponse> deleteMenu(
-            @RequestParam Long userId,
+            @UserId Long userId,
             @PathVariable Long menuId
     ) {
         menuService.delete(userId, menuId);

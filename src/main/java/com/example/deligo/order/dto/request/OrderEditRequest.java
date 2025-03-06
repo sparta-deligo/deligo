@@ -6,10 +6,10 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class EditRequest {
+public class OrderEditRequest {
     private OrderStatus orderStatus;
 
-    public EditRequest(OrderStatus orderStatus) {
+    public OrderEditRequest(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 }
