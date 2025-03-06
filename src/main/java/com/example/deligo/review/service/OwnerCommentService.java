@@ -32,6 +32,10 @@ public class OwnerCommentService {
             throw new CustomException(ExceptionType.NO_PERMISSION_ACTION);
         }
 
+        if (!review.getStore().getOwnerId().equals(owner.getId())) {
+            throw new CustomException(ExceptionType.NO_PERMISSION_ACTION, "다른 가게의 리뷰에 댓글을 작성할 수 없습니다.");
+        }
+
         if (ownerCommentRepository.existsByReviewId(reviewId)) {
             throw new CustomException(ExceptionType.REVIEW_ALREADY_HAS_COMMENT);
         }

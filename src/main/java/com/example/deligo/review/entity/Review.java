@@ -2,6 +2,7 @@ package com.example.deligo.review.entity;
 
 import com.example.deligo.common.entity.BaseDeletableEntity;
 import com.example.deligo.order.entity.Order;
+import com.example.deligo.store.entity.Store;
 import com.example.deligo.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,6 +25,10 @@ public class Review extends BaseDeletableEntity {
     @JoinColumn(name = "order_id", nullable = false, unique = true)
     private Order order;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id")
+    private Store store;
+
     @Column(nullable = false)
     private int rating;
 
@@ -31,9 +36,10 @@ public class Review extends BaseDeletableEntity {
     private String content;
 
     @Builder
-    public Review(User user, Order order, int rating, String content) {
+    public Review(User user, Order order, int rating, String content, Store store) {
         this.user = user;
         this.order = order;
+        this.store = order.getStore();
         this.rating = rating;
         this.content = content.trim();
     }

@@ -25,6 +25,7 @@ public class ReviewController {
             @UserId Long userId,
             @Valid @RequestBody ReviewRequest request
     ) {
+        System.out.println("[DEBUG] Extracted userId from JWT: " + userId);
         ReviewResponse response = reviewService.createReview(userId, request);
         return ResponseEntity.created(URI.create("/reviews/" + response.getId())).body(response);
     }
