@@ -1,4 +1,4 @@
-package com.example.deligo.common.jwt;
+package com.example.deligo.common.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
