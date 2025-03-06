@@ -2,7 +2,7 @@ package com.example.deligo.order.controller;
 
 import com.example.deligo.common.annotation.UserId;
 import com.example.deligo.order.dto.request.OrderEditRequest;
-import com.example.deligo.order.dto.request.SaveRequest;
+import com.example.deligo.order.dto.request.OrderSaveRequest;
 import com.example.deligo.order.dto.response.*;
 import com.example.deligo.order.service.orderServ.OrderService;
 import jakarta.validation.Valid;
@@ -18,14 +18,14 @@ public class OrderController {
     private final OrderService orderServ;
 
     @PostMapping
-    public ResponseEntity<SaveResponse> saveOrder(@UserId Long userId,
-                                                  @Valid @RequestBody SaveRequest reqDto) {
+    public ResponseEntity<OrderSaveResponse> saveOrder(@UserId Long userId,
+                                                       @Valid @RequestBody OrderSaveRequest reqDto) {
 
         return ResponseEntity.ok().body(orderServ.saveOrder(userId, reqDto));
     }
 
     @GetMapping("/user/{orderId}")
-    public ResponseEntity<FindResponse> checkMyOrder(@PathVariable Long orderId, @UserId Long userId) {
+    public ResponseEntity<OrderFindResponse> checkMyOrder(@PathVariable Long orderId, @UserId Long userId) {
         return ResponseEntity.ok().body(orderServ.findUserOrder(userId, orderId));
     }
 
@@ -41,7 +41,7 @@ public class OrderController {
     }
 
     @PatchMapping("/owner/{orderId}")
-    public ResponseEntity<SetStatusResponse> editOrderStatus(@PathVariable Long orderId, @RequestBody OrderEditRequest reqDto, @UserId Long userId) {
+    public ResponseEntity<SetOrderStatusResponse> editOrderStatus(@PathVariable Long orderId, @RequestBody OrderEditRequest reqDto, @UserId Long userId) {
         return ResponseEntity.ok().body(orderServ.setOrderStatus(userId, orderId, reqDto.getOrderStatus()));
    }
 }

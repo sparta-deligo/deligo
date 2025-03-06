@@ -3,10 +3,8 @@ package com.example.deligo.order.service.orderServ;
 import com.example.deligo.menu.entity.Menu;
 import com.example.deligo.menu.entity.MenuStatus;
 import com.example.deligo.menu.repository.MenuRepository;
-import com.example.deligo.order.dto.request.SaveRequest;
-import com.example.deligo.order.dto.response.SaveResponse;
-import com.example.deligo.order.entity.Order;
-import com.example.deligo.order.entity.OrderItem;
+import com.example.deligo.order.dto.request.OrderSaveRequest;
+import com.example.deligo.order.dto.response.OrderSaveResponse;
 import com.example.deligo.order.repository.OrderItemRepository;
 import com.example.deligo.order.repository.OrderRepository;
 import com.example.deligo.store.entity.Store;
@@ -64,7 +62,7 @@ class OrderServiceTest {
 
         User user = new User("testEmail", "testPw", "testName", UserRole.USER);
         Store store = new Store(user, "testStore", StoreCategory.CHICKEN, LocalTime.now(), LocalTime.now(), 5, StoreStatus.OPEN);
-        SaveRequest saveRequest = new SaveRequest(deliverAddress, menu_quan, riderComment, storeComment, storeId);
+        OrderSaveRequest orderSaveRequest = new OrderSaveRequest(deliverAddress, menu_quan, riderComment, storeComment, storeId);
 //        List<Menu> menus = new ArrayList<>();
         Menu menu1 = new Menu(store, "testMenu1", "desc", new BigDecimal("10.5"), MenuStatus.AVAILABLE);
         Menu menu2 = new Menu(store, "testMenu2", "desc", new BigDecimal("10.5"), MenuStatus.AVAILABLE);
@@ -77,10 +75,10 @@ class OrderServiceTest {
         given(menuServ.findById(any())).willReturn(Optional.of(menu2));
 
         /*when*/
-        SaveResponse saveResponse = orderService.saveOrder(userId, saveRequest);
+        OrderSaveResponse orderSaveResponse = orderService.saveOrder(userId, orderSaveRequest);
 
 
         /*then*/
-        assertNotNull(saveResponse);
+        assertNotNull(orderSaveResponse);
     }
 }
