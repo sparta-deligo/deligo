@@ -60,7 +60,7 @@ public class MenuService {
                 request.getName(),
                 request.getDescription(),
                 request.getPrice(),
-                MenuStatus.valueOf(request.getStatus())
+                request.getStatus()
         );
 
         return MenuResponse.from(menu);
