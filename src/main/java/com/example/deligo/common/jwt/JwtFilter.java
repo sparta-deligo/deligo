@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -22,11 +23,22 @@ public class JwtFilter implements Filter {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
+    private static final List<String> EXCLUDED_URIS = List.of(
+            "/users/signup",
+            "/users/login"
+    );
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+
+        if(isExcludedUri(httpRequest)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         String authHeader = httpRequest.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -49,5 +61,10 @@ public class JwtFilter implements Filter {
         request.setAttribute("userId", userId);
 
         chain.doFilter(request, response);
+    }
+
+    private boolean isExcludedUri(HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        return EXCLUDED_URIS.contains(requestUri);
     }
 }

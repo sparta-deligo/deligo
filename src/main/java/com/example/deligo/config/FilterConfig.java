@@ -16,10 +16,7 @@ public class FilterConfig {
     public FilterRegistrationBean<JwtFilter> jwtFilterRegistration() {
         FilterRegistrationBean<JwtFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(jwtFilter);
-        registrationBean.addUrlPatterns("/orders/*");
-        registrationBean.addUrlPatterns("/reviews/*");
-        registrationBean.addUrlPatterns("/stores/*");
-        registrationBean.addUrlPatterns("/menus/*");
+        registrationBean.addUrlPatterns("/*");
         registrationBean.setOrder(1);
 
         return registrationBean;
