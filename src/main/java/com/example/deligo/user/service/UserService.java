@@ -47,7 +47,7 @@ public class UserService {
             throw new CustomException(ExceptionType.INVALID_CREDENTIALS);
         }
 
-        return jwtUtil.generateToken(user.getId()).get("token");
+        return jwtUtil.generateToken(user.getId());
     }
 
 
