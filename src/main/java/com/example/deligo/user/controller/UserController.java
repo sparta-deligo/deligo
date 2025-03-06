@@ -1,9 +1,11 @@
 package com.example.deligo.user.controller;
 
 import com.example.deligo.common.dto.ApiResponse;
+import com.example.deligo.common.annotation.UserId;
 import com.example.deligo.user.dto.request.LoginRequest;
 import com.example.deligo.user.dto.request.SignupRequest;
 import com.example.deligo.user.dto.request.DeleteUserRequest;
+import com.example.deligo.user.dto.request.UpdateUserRequest;
 import com.example.deligo.user.dto.response.UserResponse;
 import com.example.deligo.user.service.UserService;
 import jakarta.validation.Valid;
@@ -33,10 +35,9 @@ public class UserController {
         return ResponseEntity.ok(tokenInfo);
     }
 
-
-    @DeleteMapping("/{userId}")
+    @DeleteMapping
     public ResponseEntity<ApiResponse> deleteUser(
-            @PathVariable Long userId,
+            @UserId Long userId,
             @Valid @RequestBody DeleteUserRequest request
     ) {
         String password = request.getPassword();
@@ -44,12 +45,32 @@ public class UserController {
         return ResponseEntity.ok(new ApiResponse("회원탈퇴 완료"));
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserResponse> getUser(@PathVariable Long userId) {
+    @GetMapping
+    public ResponseEntity<UserResponse> getUser(@UserId Long userId) {
         UserResponse response = userService.getUserById(userId);
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping
+    public ResponseEntity<UserResponse> updateUser(
+            @UserId Long userId,
+            @Valid @RequestBody UpdateUserRequest request
+    ) {
+        UserResponse response = userService.updateUser(userId, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse> logout(
+            @RequestHeader("Authorization") String token
+    ) {
+        userService.logout(token);
+        return ResponseEntity.ok(new ApiResponse("로그아웃 완료"));
+    }
 }
+
+
+
 
 
 

@@ -1,5 +1,4 @@
 package com.example.deligo.common.jwt;
-
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.common.exception.ExceptionType;
 import io.jsonwebtoken.*;
@@ -8,11 +7,11 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
@@ -23,6 +22,8 @@ public class JwtUtil {
 
     private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 24시간
     private Key signingKey;
+
+    private final Map<String, Boolean> blacklist = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void init() {
@@ -48,6 +49,9 @@ public class JwtUtil {
     }
 
     public Long getUserIdFromToken(String token) {
+        if (blacklist.containsKey(token)) {
+            throw new CustomException(ExceptionType.TOKEN_INVALID, "로그아웃된 토큰입니다.");
+        }
         try {
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
@@ -63,11 +67,18 @@ public class JwtUtil {
     }
 
     public boolean validateToken(String token) {
+        if (blacklist.containsKey(token)) {
+            return false;
+        }
         try {
             Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
             return true;
         } catch (JwtException e) {
             return false;
         }
+    }
+
+    public void invalidateToken(String token) {
+        blacklist.put(token, true);
     }
 }

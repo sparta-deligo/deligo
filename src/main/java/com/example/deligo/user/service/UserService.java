@@ -6,6 +6,7 @@ import com.example.deligo.common.jwt.JwtUtil;
 import com.example.deligo.config.security.PasswordEncoder;
 import com.example.deligo.user.dto.request.LoginRequest;
 import com.example.deligo.user.dto.request.SignupRequest;
+import com.example.deligo.user.dto.request.UpdateUserRequest;
 import com.example.deligo.user.dto.response.UserResponse;
 import com.example.deligo.user.entity.User;
 import com.example.deligo.user.repository.UserRepository;
@@ -50,25 +51,59 @@ public class UserService {
         return jwtUtil.generateToken(user.getId());
     }
 
+    @Transactional
+    public UserResponse updateUser(Long userId, UpdateUserRequest request) {
+        User user = userRepository.findActiveById(userId)
+                .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
+
+        if (request.getEmail() != null && !request.getEmail().equals(user.getEmail())) {
+            if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+                throw new CustomException(ExceptionType.DUPLICATE_EMAIL);
+            }
+            user.setEmail(request.getEmail());
+        }
+
+        if (request.getNickname() != null && !request.getNickname().equals(user.getNickname())) {
+            if (userRepository.findByNickname(request.getNickname()).isPresent()) {
+                throw new CustomException(ExceptionType.DUPLICATE_NICKNAME);
+            }
+            user.setNickname(request.getNickname());
+        }
+
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            String encodedPassword = passwordEncoder.encode(request.getPassword());
+            user.setPassword(encodedPassword);
+        }
+
+        return new UserResponse(user);
+    }
 
     @Transactional
     public void deleteUser(Long userId, String password) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findActiveById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new CustomException(ExceptionType.INVALID_CREDENTIALS);
         }
-        userRepository.delete(user);
+
+        user.softDelete();
     }
 
     @Transactional(readOnly = true)
     public UserResponse getUserById(Long userId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findActiveById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionType.USER_NOT_FOUND));
         return new UserResponse(user);
     }
+
+    @Transactional
+    public void logout(String token) {
+        jwtUtil.invalidateToken(token);
+    }
 }
+
+
 
 
 
