@@ -50,7 +50,7 @@ class OwnerCommentServiceTest {
     @BeforeEach
     void setUp() {
         owner = new User("test@example.com", "password", "Test User", UserRole.OWNER);
-        ReflectionTestUtils.setField(owner, "id", 1L); // Reflection 메서드나 필드에 직접 접근함 / 생성자 값을 구현할 수 없을 떄 임의로
+        ReflectionTestUtils.setField(owner, "id", 1L);
 
         store = new Store(owner, "Test Store", StoreCategory.KOREAN,
                 LocalTime.of(9, 0), LocalTime.of(22, 0), 10000, StoreStatus.OPEN);
