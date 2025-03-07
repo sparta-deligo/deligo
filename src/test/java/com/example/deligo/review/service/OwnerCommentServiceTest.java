@@ -14,15 +14,19 @@ import com.example.deligo.store.entity.StoreStatus;
 import com.example.deligo.order.entity.OrderStatus;
 import com.example.deligo.user.entity.UserRole;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class OwnerCommentServiceTest {
 
     @Mock
@@ -41,17 +45,20 @@ class OwnerCommentServiceTest {
     private Review review;
     private OwnerComment ownerComment;
     private Order order;
+    private Store store;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         owner = new User("test@example.com", "password", "Test User", UserRole.OWNER);
+        ReflectionTestUtils.setField(owner, "id", 1L); // Reflection 메서드나 필드에 직접 접근함 / 생성자 값을 구현할 수 없을 떄 임의로
 
         store = new Store(owner, "Test Store", StoreCategory.KOREAN,
                 LocalTime.of(9, 0), LocalTime.of(22, 0), 10000, StoreStatus.OPEN);
-        
-        order = new Order(owner, store, OrderStatus.DELIVERED);
-        
+
+        order = new Order(owner, store, new ArrayList<>(), "Test Address", "Store Comment", "Rider Comment");
+
+        order.setOrderStatus(OrderStatus.DELIVERED);
+
         review = new Review(owner, order, 5, "Great service!", store);
         
         ownerComment = new OwnerComment(owner, review, "Great comment!");
