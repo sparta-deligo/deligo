@@ -35,6 +35,9 @@ public class User extends BaseDeletableEntity {
         this.nickname = nickname;
         this.role = role;
     }
+    public boolean isOwner(){
+        return this.role == UserRole.OWNER;
+    }
 
     public void setEmail(String email) {
         this.email = email;

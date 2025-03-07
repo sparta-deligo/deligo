@@ -87,6 +87,6 @@ public class JwtFilter implements Filter {
 
     private boolean isExcludedUri(HttpServletRequest request) {
         String requestUri = request.getRequestURI();
-        return EXCLUDED_URIS.contains(requestUri);
+        return EXCLUDED_URIS.stream().anyMatch(uri -> requestUri.contains(uri));
     }
 }

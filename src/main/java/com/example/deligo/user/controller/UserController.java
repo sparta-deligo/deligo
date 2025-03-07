@@ -35,7 +35,7 @@ public class UserController {
         return ResponseEntity.ok(Map.of("token", token));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponse> deleteUser(
             @UserId Long userId,
             @Valid @RequestBody DeleteUserRequest request
