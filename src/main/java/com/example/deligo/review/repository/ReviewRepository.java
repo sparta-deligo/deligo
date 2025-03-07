@@ -20,5 +20,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Modifying
     @Query("UPDATE Store s SET s.averageRating = :newAverage WHERE s.id = :storeId")
     void updateStoreAverageRating(@Param("storeId") Long storeId, @Param("newAverage") double newAverage);
+    @Query("SELECT r FROM Review r WHERE r.order.store.id = :storeId AND r.rating BETWEEN :minRating AND :maxRating AND r.deletedAt IS NULL ORDER BY r.createdAt DESC")
+    Page<Review> findByStoreIdAndRatingBetween(@Param("storeId") Long storeId, @Param("minRating") int minRating, @Param("maxRating") int maxRating, Pageable pageable);
 
 }

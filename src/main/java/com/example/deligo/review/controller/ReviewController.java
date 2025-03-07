@@ -50,11 +50,13 @@ public class ReviewController {
 
     @GetMapping("/stores/{storeId}/reviews")
     public ResponseEntity<PaginationResponse<ReviewResponse>> getReviewsByStore(
-            @PathVariable Long storeId,
+            @UserId Long storeId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) Integer minRating,
+            @RequestParam(required = false) Integer maxRating
     ) {
-        Page<ReviewResponse> reviewPage = reviewService.getReviewsByStore(storeId, page, size);
+        Page<ReviewResponse> reviewPage = reviewService.getReviewsByStore(storeId, page, size, minRating, maxRating);
         return ResponseEntity.ok(new PaginationResponse<>(reviewPage));
     }
 }
