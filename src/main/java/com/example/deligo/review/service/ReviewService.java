@@ -102,6 +102,21 @@ public class ReviewService {
         updateStoreAverageRating(review.getOrder().getStore().getId());
     }
 
+    @Transactional(readOnly = true)
+    public Page<ReviewResponse> getReviewsByStore(Long storeId, int page, int size, Integer minRating, Integer maxRating) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        if (minRating == null) minRating = 1;
+        if (maxRating == null) maxRating = 5;
+
+        Page<Review> reviews = reviewRepository.findByStoreIdAndRatingBetween(storeId, minRating, maxRating, pageable);
+        Map<Long, String> ownerComments = getOwnerCommentsByStore(storeId);
+
+        return reviews.map(review ->
+                new ReviewResponse(review, ownerComments.getOrDefault(review.getId(), "사장님 댓글이 없습니다."))
+        );
+    }
+
     private Order getOrderById(Long orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new CustomException(ExceptionType.ORDER_NOT_FOUND, "해당 주문을 찾을 수 없습니다."));
