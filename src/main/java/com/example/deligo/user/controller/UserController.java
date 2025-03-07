@@ -1,5 +1,6 @@
 package com.example.deligo.user.controller;
 
+import com.example.deligo.common.annotation.UserId;
 import com.example.deligo.common.dto.ApiResponse;
 import com.example.deligo.user.dto.request.LoginRequest;
 import com.example.deligo.user.dto.request.SignupRequest;
@@ -35,7 +36,7 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponse> deleteUser(
-            @PathVariable Long userId,
+            @UserId Long userId,
             @Valid @RequestBody DeleteUserRequest request
     ) {
         String password = request.getPassword();
