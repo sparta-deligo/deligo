@@ -63,13 +63,13 @@ public class Store extends BaseDeletableEntity {
         this.status = status;
     }
 
-    public void Update(UpdateStoreRequest dto) {
-        this.name = name;
-        this.category = category;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
-        this.minOrderAmount = minOrderAmount;
-        this.status = status;
+    public void update(UpdateStoreRequest dto) {
+        this.name = dto.getName();
+        this.category = dto.getStoreCategory();
+        this.openTime = dto.getOpenTime();
+        this.closeTime = dto.getCloseTime();
+        this.minOrderAmount = dto.getMinOrderAmount();
+        this.status = dto.getStatus();
     }
 
     public Long getOwnerId() {

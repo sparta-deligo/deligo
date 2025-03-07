@@ -1,7 +1,7 @@
 package com.example.deligo.order.entity;
 
 import com.example.deligo.common.entity.BaseTimeEntity;
-import com.example.deligo.order.dto.request.SaveRequest;
+import com.example.deligo.order.dto.request.OrderSaveRequest;
 import com.example.deligo.store.entity.Store;
 import com.example.deligo.user.entity.User;
 import jakarta.persistence.*;
@@ -59,7 +59,7 @@ public class Order extends BaseTimeEntity {
         this.riderComment = riderComment;
     }
 
-    public Order(User user, Store store, List<OrderItem> orderItems, SaveRequest req) {
+    public Order(User user, Store store, List<OrderItem> orderItems, OrderSaveRequest req) {
         this.user = user;
         this.store = store;
         this.orderItems = orderItems;
