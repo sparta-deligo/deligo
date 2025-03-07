@@ -26,3 +26,5 @@
 # ERD
 <img width="1075" alt="erd" src="https://github.com/user-attachments/assets/1b8861a4-73e3-4ab8-bc59-01cfec823386" />
 
+# Test Coverage
+<img width="685" alt="Screenshot 2025-03-07 at 11 15 10" src="https://github.com/user-attachments/assets/452d7800-6cb3-425c-b256-7ed1c8ad6f59" />
