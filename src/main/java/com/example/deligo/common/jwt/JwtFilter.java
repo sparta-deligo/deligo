@@ -22,7 +22,6 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class JwtFilter implements Filter {
-
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 

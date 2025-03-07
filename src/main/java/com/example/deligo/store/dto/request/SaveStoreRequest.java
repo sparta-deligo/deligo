@@ -1,4 +1,4 @@
-package com.example.deligo.store.dto.Request;
+package com.example.deligo.store.dto.request;
 
 import com.example.deligo.store.entity.StoreCategory;
 import com.example.deligo.store.entity.StoreStatus;
@@ -8,10 +8,7 @@ import lombok.Getter;
 import java.time.LocalTime;
 
 @Getter
-public class StoreSaveRequestDto {
-
-    @NotNull(message = "소유자 ID는 필수입니다.")
-    private Long ownerId;
+public class SaveStoreRequest {
 
     @NotBlank(message = "가게 이름은 필수입니다.")
     @Size(min = 1, max = 50, message = "가게 이름은 2~50자 이내여야 합니다.")
@@ -31,8 +28,4 @@ public class StoreSaveRequestDto {
 
     @NotNull(message = "가게 상태는 필수입니다.")
     private StoreStatus status;
-
-    @DecimalMin(value = "0.0", message = "평점은 0.0 이상이어야 합니다.")
-    @DecimalMax(value = "5.0", message = "평점은 5.0 이하여야 합니다.")
-    private Double averageRating;
 }

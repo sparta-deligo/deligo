@@ -1,0 +1,122 @@
+package com.example.deligo.review.service;
+import com.example.deligo.common.exception.CustomException;
+import com.example.deligo.common.exception.ExceptionType;
+import com.example.deligo.order.entity.Order;
+import com.example.deligo.review.entity.OwnerComment;
+import com.example.deligo.review.entity.Review;
+import com.example.deligo.review.repository.OwnerCommentRepository;
+import com.example.deligo.review.repository.ReviewRepository;
+import com.example.deligo.store.entity.Store;
+import com.example.deligo.user.entity.User;
+import com.example.deligo.user.repository.UserRepository;
+import com.example.deligo.store.entity.StoreCategory;
+import com.example.deligo.store.entity.StoreStatus;
+import com.example.deligo.order.entity.OrderStatus;
+import com.example.deligo.user.entity.UserRole;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class OwnerCommentServiceTest {
+
+    @Mock
+    private OwnerCommentRepository ownerCommentRepository;
+
+    @Mock
+    private ReviewRepository reviewRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @InjectMocks
+    private OwnerCommentService ownerCommentService;
+
+    private User owner;
+    private Review review;
+    private OwnerComment ownerComment;
+    private Order order;
+    private Store store;
+
+    @BeforeEach
+    void setUp() {
+        owner = new User("test@example.com", "password", "Test User", UserRole.OWNER);
+        ReflectionTestUtils.setField(owner, "id", 1L);
+
+        store = new Store(owner, "Test Store", StoreCategory.KOREAN,
+                LocalTime.of(9, 0), LocalTime.of(22, 0), 10000, StoreStatus.OPEN);
+
+        order = new Order(owner, store, new ArrayList<>(), "Test Address", "Store Comment", "Rider Comment");
+
+        order.setOrderStatus(OrderStatus.DELIVERED);
+
+        review = new Review(owner, order, 5, "Great service!", store);
+        
+        ownerComment = new OwnerComment(owner, review, "Great comment!");
+    }
+
+    @Test
+    void testCreateOwnerComment_Success() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(owner));
+        when(reviewRepository.findById(1L)).thenReturn(Optional.of(review));
+
+        ownerCommentService.createOwnerComment(1L, 1L, "Great review!");
+
+        verify(ownerCommentRepository, times(1)).save(any(OwnerComment.class));
+    }
+
+    @Test
+    void testUpdateOwnerComment_Success() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(owner));
+        when(ownerCommentRepository.findById(1L)).thenReturn(Optional.of(ownerComment));
+
+        ownerCommentService.updateOwnerComment(1L, 1L, "Updated review");
+
+        verify(ownerCommentRepository, times(1)).save(any(OwnerComment.class));
+    }
+
+    @Test
+    void testUpdateOwnerComment_Fail_NotOwner() {
+        User nonOwner = new User("nonowner@example.com", "password", "Non Owner", UserRole.USER);
+        when(userRepository.findById(2L)).thenReturn(Optional.of(nonOwner));
+        when(ownerCommentRepository.findById(1L)).thenReturn(Optional.of(ownerComment));
+
+        CustomException thrown = assertThrows(CustomException.class, () -> {
+            ownerCommentService.updateOwnerComment(2L, 1L, "Invalid update");
+        });
+
+        assertEquals(ExceptionType.NO_PERMISSION_ACTION, thrown.getExceptionType());
+    }
+
+    @Test
+    void testDeleteOwnerComment_Success() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(owner));
+        when(ownerCommentRepository.findById(1L)).thenReturn(Optional.of(ownerComment));
+
+        ownerCommentService.deleteOwnerComment(1L, 1L);
+
+        verify(ownerCommentRepository, times(1)).delete(any(OwnerComment.class));
+    }
+
+    @Test
+    void testDeleteOwnerComment_Fail_NotOwner() {
+        User nonOwner = new User("nonowner@example.com", "password", "Non Owner", UserRole.USER);
+        when(userRepository.findById(2L)).thenReturn(Optional.of(nonOwner));
+        when(ownerCommentRepository.findById(1L)).thenReturn(Optional.of(ownerComment));
+
+        CustomException thrown = assertThrows(CustomException.class, () -> {
+            ownerCommentService.deleteOwnerComment(2L, 1L);
+        });
+
+        assertEquals(ExceptionType.NO_PERMISSION_ACTION, thrown.getExceptionType());
+    }
+}

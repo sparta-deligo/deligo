@@ -102,11 +102,3 @@ public class UserService {
     public void logout(String token) {
         jwtUtil.invalidateToken(token);
     }
-}
-
-
-
-
-
-
-

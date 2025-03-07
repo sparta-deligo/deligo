@@ -3,7 +3,7 @@ package com.example.deligo.order.service.orderServ;
 import com.example.deligo.common.exception.CustomException;
 import com.example.deligo.menu.entity.Menu;
 import com.example.deligo.menu.repository.MenuRepository;
-import com.example.deligo.order.dto.request.SaveRequest;
+import com.example.deligo.order.dto.request.OrderSaveRequest;
 import com.example.deligo.order.dto.response.*;
 import com.example.deligo.order.entity.Order;
 import com.example.deligo.order.entity.OrderItem;
@@ -38,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
     private final MenuRepository menuServ;
 
     @Override
-    public SaveResponse saveOrder(Long userId, SaveRequest reqDto) {
+    public OrderSaveResponse saveOrder(Long userId, OrderSaveRequest reqDto) {
         User user = userServ.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         Store store = storeServ.findById(reqDto.getStoreId()).orElseThrow(() -> new CustomException(STORE_NOT_FOUND));
         Order order = new Order(user, store, new ArrayList<>(), reqDto);
@@ -54,14 +54,14 @@ public class OrderServiceImpl implements OrderService {
         }
         orderItemRepo.saveAll(orderItems);
 
-        return new SaveResponse(order, reqDto.getMenus());
+        return new OrderSaveResponse(order, reqDto.getMenus());
     }
 
     @Override
-    public FindResponse findUserOrder(Long userId, Long orderId) {
+    public OrderFindResponse findUserOrder(Long userId, Long orderId) {
         Order order = userOrderCheck(userId, orderId);
 
-        return new FindResponse(order);
+        return new OrderFindResponse(order);
     }
 
     @Override
@@ -93,13 +93,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public SetStatusResponse setOrderStatus(Long loginUserId, Long orderId, OrderStatus status) {
+    public SetOrderStatusResponse setOrderStatus(Long loginUserId, Long orderId, OrderStatus status) {
         Order order = findOrder(orderId);
 
         if (order.getStore().getOwner().getId().equals(loginUserId)) {
             isCanceled(order);
             order.setOrderStatus(status);
-            return new SetStatusResponse(order);
+            return new SetOrderStatusResponse(order);
         } else {
             throw getNoPermissionException();
         }

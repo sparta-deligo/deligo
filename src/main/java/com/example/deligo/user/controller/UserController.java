@@ -1,5 +1,6 @@
 package com.example.deligo.user.controller;
 
+import com.example.deligo.common.annotation.UserId;
 import com.example.deligo.common.dto.ApiResponse;
 import com.example.deligo.common.annotation.UserId;
 import com.example.deligo.user.dto.request.LoginRequest;
